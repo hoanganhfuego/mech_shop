@@ -6,7 +6,7 @@ const mysql = require("mysql2");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
-const authGoogle = require("./api/middleware/authGoogle")
+const authGoogle = require("./api/middleware/authGoogle");
 
 app.use(
   cors({
@@ -15,6 +15,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/images", express.static("images"));
 
 app.use(
   cookieSession({
@@ -26,6 +28,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+console.log(process.env.PORT);
 
 const port = process.env.PORT || 5000;
 
