@@ -25,26 +25,26 @@ client.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response.status;
-    const reset = error.response.data.reset_refesh_token || null
-    if(reset) {
-      store.dispatch(setAuth(null))
-      return window.location.href = Path.login
+    const reset = error.response.data.reset_refesh_token || null;
+    if (reset) {
+      store.dispatch(setAuth(null));
+      return (window.location.href = Path.login);
     }
     if (status !== 401) {
       return Promise.reject(error);
     } else {
       return refreshToken(store.getState().user.auth)
+        .catch((err) => {
+          console.log("co loi", err);
+          store.dispatch(setAuth(null));
+          return Promise.reject(err);
+        })
         .then((res) => {
           store.dispatch(updateAuth(res.data));
           error.response.config.headers["x-access-token"] =
             res.data.access_token;
           return axios(error.response.config);
-        })
-        // .catch((err) => {
-        //   console.log("co loi", err)
-        //   store.dispatch(setAuth(null));
-        //   return Promise.reject(err);
-        // });
+        });
     }
   }
 );

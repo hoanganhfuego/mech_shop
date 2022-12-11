@@ -1,7 +1,7 @@
 import { Button, TextField, Snackbar } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Header from "../../components/Header";
@@ -104,9 +104,7 @@ export default function Login() {
                 error={Boolean(errors.password)}
                 value={values.password}
                 type="password"
-                onChange={(e) =>
-                  setFieldValue("password", e.target.value)
-                }
+                onChange={(e) => setFieldValue("password", e.target.value)}
                 fullWidth
               />
             </div>
@@ -139,7 +137,7 @@ export default function Login() {
               Login with Google
             </Button>
             <Button variant="outlined" type="button" className="!mb-6 w-full">
-              Sign up
+              <Link to={Path.signup}>Sign up</Link>
             </Button>
           </div>
         </form>

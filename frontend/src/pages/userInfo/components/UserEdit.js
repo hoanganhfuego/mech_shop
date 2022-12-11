@@ -102,7 +102,7 @@ export default function UserEdit() {
     postImage(formData).then((res) => {
       setFieldValue(
         "user_avatar",
-        process.env.REACT_APP_API_URL + "/" + res.data
+        process.env.REACT_APP_API_URL + res.data
       );
     });
     // const reader = new FileReader();

@@ -120,9 +120,7 @@ export default function Signup() {
                 error={Boolean(errors.password)}
                 value={values.password}
                 type="password"
-                onChange={(e) =>
-                  setFieldValue("password", e.target.value)
-                }
+                onChange={(e) => setFieldValue("password", e.target.value)}
                 fullWidth
               />
             </div>
