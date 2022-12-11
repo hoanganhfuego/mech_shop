@@ -1,5 +1,13 @@
+import Banner from "../../components/Banner";
+import Header from "../../components/Header";
+import Main from "./Main"
+
 export default function UserInfo(){
     return (
-        <div>user info</div>
+        <div>
+            <Header />
+            <Banner />
+            <Main />
+        </div>
     )
 }

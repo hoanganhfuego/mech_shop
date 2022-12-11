@@ -1,6 +1,26 @@
 const db = require("../../../mysql");
 
-async function getOneUserInfo({ id }) {
+async function updateUserInformation(
+  id,
+  {
+    user_avatar,
+    name,
+    gender,
+    email,
+    phone,
+    birth_year,
+    birth_month,
+    birth_day,
+    address_prefecture,
+    address_district,
+    address_address,
+  }
+) {
+  const query = `UPDATE user SET user_avatar = '${user_avatar}', name = '${name}', email = '${email}', gender = '${gender}', phone = '${phone}', birth_year = '${birth_year}', birth_month = '${birth_month}', birth_day = '${birth_day}', address_prefecture = '${address_prefecture}', address_district = '${address_district}', address_address = '${address_address}' WHERE id = '${id}';`;
+  return await db.query(query);
+}
+
+async function getOneUserInfo(id) {
   const query = "SELECT * FROM user WHERE id = ?";
   return db.query(query, [id]);
 }
@@ -28,6 +48,7 @@ async function findUserEmail({ email }) {
 }
 
 module.exports = {
+  updateUserInformation,
   getUserInfo,
   signUp,
   login,

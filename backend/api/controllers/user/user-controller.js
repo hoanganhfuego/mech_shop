@@ -1,15 +1,25 @@
 const userModel = require("../../../database/facade/models/user/user");
-const refeshTokenModel = require("../../../database/facade/models/user/refeshToken");
 const generateToken = require("../../../utils/generateToken");
-const jwt = require("jsonwebtoken");
 const encrypted = require("bcryptjs");
+
+async function getOneUserInfo(req, res) {
+  try {
+    const id = req.params.id;
+    const [data] = await userModel.getOneUserInfo(id);
+    delete data[0].password;
+    res.json(data[0]);
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
+}
 
 async function getUserInfo(req, res) {
   try {
     const [data] = await userModel.getUserInfo();
+    delete data[0].password;
     res.json(data);
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send({ message: error });
   }
 }
 
@@ -27,7 +37,7 @@ async function signUp(req, res) {
     if (oldUser[0].length) {
       return res
         .status(409)
-        .send("this email has already asigned to an account");
+        .send({ message: "this email has already asigned to an account" });
     }
     // encrypted password
     const encryptedPassword = await encrypted.hash(password, 10);
@@ -47,22 +57,11 @@ async function signUp(req, res) {
       email,
     });
     // get new user infomation
-    const [UserInfo] = await userModel.getOneUserInfo({ id: data.insertId });
-
-    //save refesh token
-    await refeshTokenModel.createRefeshToken({
-      refesh_token: refesh_token,
-      initial_date: Date.now(),
-    });
-    res.status(200).json({
-      id: data.insertId,
-      name: UserInfo[0].name,
-      email: UserInfo[0].email,
-      refesh_token,
-      access_token,
-    });
+    const [UserInfo] = await userModel.getOneUserInfo(data.insertId);
+    delete UserInfo[0].password;
+    res.status(200).json({ ...UserInfo[0], access_token, refesh_token });
   } catch (error) {
-    res.status(500).send({ error });
+    res.status(500).send({ message: error });
   }
 }
 
@@ -70,13 +69,15 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
     // check fields validation
-    if (!email || !password) res.status(400).send("all field are required");
+    if (!email || !password) res.status(400).send("All field are required");
     // check if email exist or not
     const [oldUser] = await userModel.findUserEmail({
       email: email.toLowerCase(),
     });
     if (!Boolean(oldUser.length)) {
-      return res.status(409).send("your email or password is not correct");
+      return res
+        .status(409)
+        .send({ message: "Your email or password is not correct" });
     }
     // check if email and password are correct or not
     const [data] = await userModel.findUserEmail({ email }); // get password by req's email
@@ -84,10 +85,10 @@ async function login(req, res) {
       password,
       data[0].password
     );
-    if (!isCorrectPassword)
-      return res.status(400).send({ message: "password is not correct" });
+    if (!isCorrectPassword) {
+      return res.status(400).send({ message: "Password is not correct" });
+    }
     if (data[0] && isCorrectPassword) {
-      console.log(data[0]);
       //create token
       const refesh_token = generateToken.refesh_token({
         id: data[0].id,
@@ -105,7 +106,21 @@ async function login(req, res) {
   }
 }
 
+async function updateUserInformation(req, res) {
+  try {
+    console.log("xin chao")
+    const id = req.params.id;
+    await userModel.updateUserInformation(id, req.body);
+    console.log(id)
+    res.status(200).send({ message: "update user's profile success" });
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
+}
+
 module.exports = {
+  updateUserInformation,
+  getOneUserInfo,
   getUserInfo,
   signUp,
   login,

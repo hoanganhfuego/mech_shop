@@ -1,4 +1,5 @@
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Snackbar } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -7,19 +8,17 @@ import Header from "../../components/Header";
 import { login } from "../../services/api";
 import Path from "../../route/Path";
 import { setAuth } from "../../redux/userReducer";
+import { useEffect, useState } from "react";
 
 export default function Login() {
+  const [sendState, setSendState] = useState({
+    loading: false,
+    error: null,
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const onSubmit = () => {
-    login(values).then((res) => {
-      console.log(res.data);
-      const auth = {
-        ...res.data,
-      };
-      dispatch(setAuth(auth));
-      navigate(Path.home);
-    });
+    setSendState((prev) => ({ ...prev, loading: true }));
   };
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -43,6 +42,42 @@ export default function Login() {
   const authGoogle = () => {
     window.open(`${process.env.REACT_APP_API_URL}/auth/google/callback`);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    const cleanup = () => {
+      mounted = false;
+    };
+    if (!sendState.loading) return;
+
+    const info = { ...values };
+
+    info.email = info.email.trim();
+    info.password = info.password.trim();
+
+    login(info)
+      .then((res) => {
+        if (!mounted) return;
+        const auth = {
+          ...res.data,
+        };
+        setSendState((prev) => ({
+          loading: false,
+          ...prev,
+        }));
+        dispatch(setAuth(auth));
+        navigate(Path.home);
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        setSendState({
+          loading: false,
+          error: error.response.data.message,
+        });
+      });
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendState.loading]);
 
   return (
     <div>
@@ -69,7 +104,9 @@ export default function Login() {
                 error={Boolean(errors.password)}
                 value={values.password}
                 type="password"
-                onChange={(e) => setFieldValue("password", e.target.value)}
+                onChange={(e) =>
+                  setFieldValue("password", e.target.value)
+                }
                 fullWidth
               />
             </div>
@@ -80,9 +117,18 @@ export default function Login() {
               variant="contained"
               type="submit"
               size="medium"
-              className="!mb-6"
+              className="!mb-6 !min-w-[80px] !h-[40px]"
             >
-              Login
+              {sendState.loading ? (
+                <CircularProgress
+                  size={28}
+                  sx={{
+                    color: "white",
+                  }}
+                />
+              ) : (
+                "Login"
+              )}
             </Button>
             <Button
               variant="outlined"
@@ -98,6 +144,24 @@ export default function Login() {
           </div>
         </form>
       </div>
+      <Snackbar
+        ContentProps={{
+          sx: {
+            borderColor: "red",
+            border: 1,
+            bgcolor: "white",
+            color: "red",
+          },
+        }}
+        onClose={() => {
+          setSendState((prev) => ({ ...prev, error: null }));
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={Boolean(sendState.error)}
+        message={sendState.error}
+        key={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={3000}
+      />
     </div>
   );
 }

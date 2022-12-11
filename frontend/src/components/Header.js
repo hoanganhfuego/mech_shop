@@ -4,7 +4,12 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import Popover from "@mui/material/Popover";
 import { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Button } from "@mui/material";
+import Path from "../route/Path";
+import { logout } from "../services/api/index";
+import { setAuth } from "../redux/userReducer";
 
 const navBarContent = [
   {
@@ -47,12 +52,19 @@ const navBarContent = [
 ];
 
 export default function Header() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.user.auth);
   const [anchorEl, setAnchorEl] = useState({
     type: "",
-    elemet: null,
+    element: null,
   });
+  const onLogOut = () => {
+    dispatch(setAuth(null));
+    navigate(Path.home);
+  };
   return (
-    <div className="w-full flex justify-center py-2">
+    <div className="w-full flex justify-center py-2 sticky top-0 bg-white z-50">
       <div className="w-1200 flex justify-between items-center">
         <Link to="/">
           <h1 className=" font-extrabold text-4xl text-primary-pink cursor-pointer">
@@ -105,8 +117,54 @@ export default function Header() {
         <div className="flex gap-10">
           <SearchIcon />
           <LocalMallOutlinedIcon />
-          <AccountCircleOutlinedIcon />
+          <AccountCircleOutlinedIcon
+            className=" cursor-pointer"
+            onClick={(e) =>
+              setAnchorEl({ type: "userInfo", element: e.currentTarget })
+            }
+          />
         </div>
+        {anchorEl.type === "userInfo" && (
+          <Popover
+            className="mt-2"
+            anchorEl={anchorEl.element}
+            open={Boolean(anchorEl.element)}
+            onClose={() =>
+              setAnchorEl({
+                type: "",
+                element: null,
+              })
+            }
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <div className="flex flex-col">
+              {auth ? (
+                <>
+                  <Link to={Path.userInfo}>
+                    <Button>User info</Button>
+                  </Link>
+                  <Button onClick={onLogOut}>Log out</Button>
+                </>
+              ) : (
+                <>
+                  <Link to={Path.login}>
+                    <Button>Login</Button>
+                  </Link>
+                  <Link to={Path.signup}>
+                    <Button>Sign up</Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </Popover>
+        )}
       </div>
     </div>
   );

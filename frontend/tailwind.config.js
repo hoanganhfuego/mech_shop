@@ -4,14 +4,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "primary-pink" : "#FD789D"
+        "primary-pink": "#FD789D",
+        "primary-grey": "#f6f7fa",
       },
       width: {
         1200: "1200px",
       },
       fontSize: {
-        normal: "16px"
-      }
+        normal: "16px",
+      },
     },
   },
   plugins: [],

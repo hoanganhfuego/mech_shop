@@ -2,6 +2,7 @@ import { Button, TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Header from "../../components/Header";
 import { signup } from "../../services/api";
@@ -9,22 +10,14 @@ import { setAuth } from "../../redux/userReducer";
 import Path from "../../route/Path";
 
 export default function Signup() {
+  const [sendState, setSendState] = useState({
+    loading: false,
+    error: null,
+  });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const onSubmit = () => {
-    const userInfo = {
-      name: values.name,
-      email: values.email,
-      password: values.password,
-    };
-    signup(userInfo).then((res) => {
-      console.log(res.data);
-      const auth = {
-        ...res.data,
-      };
-      dispatch(setAuth(auth));
-      navigate(Path.home);
-    });
+    setSendState((prev) => ({ ...prev, loading: true }));
   };
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("user name required"),
@@ -53,6 +46,43 @@ export default function Signup() {
     },
     onSubmit,
   });
+
+  useEffect(() => {
+    let mounted = true;
+    const cleanup = () => {
+      mounted = false;
+    };
+    if (!sendState.loading) return;
+
+    const info = { ...values };
+
+    info.name = info.name.trim();
+    info.email = info.email.trim();
+    info.password = info.password.trim();
+
+    signup(info)
+      .then((res) => {
+        if (!mounted) return;
+        const auth = {
+          ...res.data,
+        };
+        setSendState((prev) => ({
+          loading: false,
+          ...prev,
+        }));
+        dispatch(setAuth(auth));
+        navigate(Path.home);
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        setSendState({
+          loading: false,
+          error: error.response.data.message,
+        });
+      });
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendState.loading]);
 
   return (
     <div>
@@ -90,7 +120,9 @@ export default function Signup() {
                 error={Boolean(errors.password)}
                 value={values.password}
                 type="password"
-                onChange={(e) => setFieldValue("password", e.target.value)}
+                onChange={(e) =>
+                  setFieldValue("password", e.target.value)
+                }
                 fullWidth
               />
             </div>

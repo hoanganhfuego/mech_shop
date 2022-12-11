@@ -40,10 +40,11 @@ client.interceptors.response.use(
             res.data.access_token;
           return axios(error.response.config);
         })
-        .catch((err) => {
-          store.dispatch(setAuth(null));
-          return Promise.reject(err);
-        });
+        // .catch((err) => {
+        //   console.log("co loi", err)
+        //   store.dispatch(setAuth(null));
+        //   return Promise.reject(err);
+        // });
     }
   }
 );
