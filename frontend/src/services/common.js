@@ -6,6 +6,5 @@ export const getProvincesAndDistrict = () => {
 };
 
 export const postImage = (body) => {
-  console.log(body)
   return client.post("api/post-image", body);
 };

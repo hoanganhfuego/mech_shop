@@ -23,3 +23,7 @@ export const getUserInformation = (id) => {
 export const updateUserInformation = (id, body) => {
   return client.patch(`api/user-update-information/${id}`, body);
 };
+
+export const getUserProducts = (id) => {
+  return client.get(`api/user-products/${id}`)
+}

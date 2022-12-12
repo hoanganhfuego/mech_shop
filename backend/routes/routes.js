@@ -1,4 +1,5 @@
 const userController = require("../api/controllers/user/user-controller");
+const userProductsController = require("../api/controllers/user/user-products-controller")
 const auth = require("../api/middleware/auth");
 const passport = require("passport");
 const generateToken = require("../utils/generateToken");
@@ -28,6 +29,9 @@ const routes = (app) => {
       auth.verifyToken,
       userController.updateUserInformation
     );
+
+    // user products
+    app.get("/user-products/:id", auth.verifyToken, userProductsController.getUserProducts)
 
     // signup and login
     app.post("/signup", userController.signUp);

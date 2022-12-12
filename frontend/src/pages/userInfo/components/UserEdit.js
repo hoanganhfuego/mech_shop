@@ -100,27 +100,14 @@ export default function UserEdit() {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
     postImage(formData).then((res) => {
+      const imageUrl = res.data.replace(/\\/g, "/");
       setFieldValue(
         "user_avatar",
-        process.env.REACT_APP_API_URL + res.data
+        process.env.REACT_APP_API_URL + imageUrl
       );
     });
-    // const reader = new FileReader();
-    // console.log(file)
-
-    // reader.readAsDataURL(file);
-    // reader.onload = () => {
-    //   console.log(reader.result);
-    //   setFieldValue("user_avatar", reader.result);
-    // };
-
-    // reader.readAsArrayBuffer(file);
-    // reader.onload = () => {
-    //   const blob = new Blob([reader.result]);
-    //   const url = URL.createObjectURL(blob, { type: "image/png" });
-    //   setFieldValue("user_avatar", url)
-    // };
   };
+  console.log(values.user_avatar)
 
   useEffect(() => {
     let mounted = true;
