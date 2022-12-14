@@ -22,16 +22,16 @@ async function verifyToken(req, res, next) {
 async function verifyRefreshToken(req, res, next) {
   if (req.headers["x-access-token"]) {
     try {
-      const refesh_token = req.body.refesh_token;
+      const refresh_token = req.body.refresh_token;
       const decodedToken = await jwt.verify(
-        refesh_token,
+        refresh_token,
         process.env.REFESH_TOKEN_KEY
       );
       const user = await decodedToken;
       req.user = user;
       next();
     } catch (error) {
-      res.status(401).send({ error, message: "unauthorized", reset_refesh_token: true });
+      res.status(401).send({ error, message: "unauthorized", reset_refresh_token: true });
     }
   } else {
     return res.status(400).send("invalid request");

@@ -24,18 +24,18 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response.status;
-    const reset = error.response.data.reset_refesh_token || null;
+    const status = error.response?.status;
+    const reset = error.response?.data?.reset_refresh_token || null;
     if (reset) {
       store.dispatch(setAuth(null));
-      return (window.location.href = Path.login);
+      window.location.href = Path.home;
+      return Promise.reject(error)
     }
     if (status !== 401) {
       return Promise.reject(error);
     } else {
       return refreshToken(store.getState().user.auth)
         .catch((err) => {
-          console.log("co loi", err);
           store.dispatch(setAuth(null));
           return Promise.reject(err);
         })

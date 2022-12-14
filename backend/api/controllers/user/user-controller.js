@@ -47,8 +47,8 @@ async function signUp(req, res) {
       email: email.toLowerCase(),
       password: encryptedPassword,
     });
-    // create token: access token and refesh token
-    const refesh_token = generateToken.refesh_token({
+    // create token: access token and refresh token
+    const refresh_token = generateToken.refresh_token({
       id: data.insertId,
       email,
     });
@@ -59,7 +59,7 @@ async function signUp(req, res) {
     // get new user infomation
     const [UserInfo] = await userModel.getOneUserInfo(data.insertId);
     delete UserInfo[0].password;
-    res.status(200).json({ ...UserInfo[0], access_token, refesh_token });
+    res.status(200).json({ ...UserInfo[0], access_token, refresh_token });
   } catch (error) {
     res.status(500).send({ message: error });
   }
@@ -90,7 +90,7 @@ async function login(req, res) {
     }
     if (data[0] && isCorrectPassword) {
       //create token
-      const refesh_token = generateToken.refesh_token({
+      const refresh_token = generateToken.refresh_token({
         id: data[0].id,
         email,
       });
@@ -99,7 +99,7 @@ async function login(req, res) {
         email,
       });
       delete data[0].password;
-      res.status(200).send({ ...data[0], access_token, refesh_token });
+      res.status(200).send({ ...data[0], access_token, refresh_token });
     }
   } catch (error) {
     res.status(500).send({ message: error });
@@ -108,10 +108,8 @@ async function login(req, res) {
 
 async function updateUserInformation(req, res) {
   try {
-    console.log("xin chao")
     const id = req.params.id;
     await userModel.updateUserInformation(id, req.body);
-    console.log(id)
     res.status(200).send({ message: "update user's profile success" });
   } catch (error) {
     res.status(500).send({ message: error });

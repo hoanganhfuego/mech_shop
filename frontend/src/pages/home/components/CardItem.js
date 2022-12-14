@@ -34,7 +34,10 @@ export default function CardItem(props) {
         <span className=" float-right">{price}</span>
       </div>
       <div className="flex items-center justify-between">
-        <img src="https://i.pinimg.com/564x/68/a7/cd/68a7cd011d98c6e6599dfe3a769465e5.jpg" className="w-7 aspect-square rounded-full"></img>
+        <img
+          src="https://i.pinimg.com/564x/68/a7/cd/68a7cd011d98c6e6599dfe3a769465e5.jpg"
+          className="w-7 aspect-square rounded-full"
+        ></img>
         <span>{ownerName}</span>
       </div>
     </div>

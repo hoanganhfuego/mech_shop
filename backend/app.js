@@ -28,7 +28,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-console.log(process.env.PORT);
 
 const port = process.env.PORT || 5000;
 

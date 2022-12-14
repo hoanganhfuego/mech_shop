@@ -52,7 +52,9 @@ export default function Signup() {
     const cleanup = () => {
       mounted = false;
     };
-    if (!sendState.loading) return;
+    if (!sendState.loading) {
+      return cleanup;
+    }
 
     const info = { ...values };
 
@@ -77,7 +79,7 @@ export default function Signup() {
         if (!mounted) return;
         setSendState({
           loading: false,
-          error: error.response.data.message,
+          error: error.response?.data?.message,
         });
       });
     return cleanup;

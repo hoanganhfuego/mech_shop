@@ -1,6 +1,8 @@
 async function postImage(req, res) {
-  console.log(req.file);
-  res.status(200).send(req.file.path);
+  const imageFiles = req.files.map((file) => {
+    return file.path;
+  });
+  res.status(200).send(imageFiles);
 }
 
 module.exports = {

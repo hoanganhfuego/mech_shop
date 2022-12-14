@@ -13,10 +13,10 @@ async function updateUserInformation(
     birth_day,
     address_prefecture,
     address_district,
-    address_address,
+    address_street,
   }
 ) {
-  const query = `UPDATE user SET user_avatar = '${user_avatar}', name = '${name}', email = '${email}', gender = '${gender}', phone = '${phone}', birth_year = '${birth_year}', birth_month = '${birth_month}', birth_day = '${birth_day}', address_prefecture = '${address_prefecture}', address_district = '${address_district}', address_address = '${address_address}' WHERE id = '${id}';`;
+  const query = `UPDATE user SET user_avatar = '${user_avatar}', name = '${name}', email = '${email}', gender = '${gender}', phone = '${phone}', birth_year = '${birth_year}', birth_month = '${birth_month}', birth_day = '${birth_day}', address_prefecture = '${address_prefecture}', address_district = '${address_district}', address_street = '${address_street}' WHERE id = '${id}';`;
   return await db.query(query);
 }
 

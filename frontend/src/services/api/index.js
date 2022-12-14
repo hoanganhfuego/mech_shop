@@ -25,5 +25,17 @@ export const updateUserInformation = (id, body) => {
 };
 
 export const getUserProducts = (id) => {
-  return client.get(`api/user-products/${id}`)
+  return client.get(`api/user-products/${id}`);
+};
+
+export const updateUserProducts = (userId, productId, body) => {
+  return client.patch(`api/user-products/${userId}/product/${productId}`, body);
+};
+
+export const addUserProducts = (userId, body) => {
+  return client.post(`api/user-products/${userId}`, body);
+};
+
+export const deleteProduct = (productId) => {
+  return client.delete(`api/user-products/${productId}`)
 }

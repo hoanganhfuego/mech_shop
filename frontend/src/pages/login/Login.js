@@ -48,7 +48,9 @@ export default function Login() {
     const cleanup = () => {
       mounted = false;
     };
-    if (!sendState.loading) return;
+    if (!sendState.loading) {
+      return cleanup;
+    }
 
     const info = { ...values };
 
@@ -72,7 +74,7 @@ export default function Login() {
         if (!mounted) return;
         setSendState({
           loading: false,
-          error: error.response.data.message,
+          error: error.response?.data?.message,
         });
       });
     return cleanup;
@@ -129,14 +131,14 @@ export default function Login() {
               )}
             </Button>
             <Button
-              variant="outlined"
+              variant="contained"
               type="button"
               className="!mb-6 w-full"
               onClick={authGoogle}
             >
               Login with Google
             </Button>
-            <Button variant="outlined" type="button" className="!mb-6 w-full">
+            <Button variant="contained" type="button" className="!mb-6 w-full">
               <Link to={Path.signup}>Sign up</Link>
             </Button>
           </div>

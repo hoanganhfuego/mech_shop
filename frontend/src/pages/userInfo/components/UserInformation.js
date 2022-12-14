@@ -10,13 +10,13 @@ export default function UserInformation() {
   const userInfo = useSelector((state) => state.user.auth);
 
   return (
-    <div className="bg-white rounded basis-3/4 p-6">
+    <div className="bg-white rounded basis-3/4 w-3/4 p-6">
       <p className=" mb-10 font-bold text-3xl">User information</p>
       <div>
         <div className="flex items-start mb-6">
           <p className=" mr-6 w-1/3">Avatar :</p>
           <img
-            srcSet={`${userInfo.user_avatar || blank_avatar} 2x`}
+            src={userInfo.user_avatar || blank_avatar}
             className="rounded-full aspect-square w-24"
             alt="blank avatar"
           />
@@ -61,11 +61,11 @@ export default function UserInformation() {
 
         <div className="flex items-start mb-6">
           <p className=" mr-6 w-1/3">Address :</p>
-          {userInfo.address_address &&
+          {userInfo.address_street &&
             userInfo.address_district &&
             userInfo.address_prefecture && (
               <p>
-                {userInfo.address_address}, {userInfo.address_district},
+                {userInfo.address_street}, {userInfo.address_district},
                 {userInfo.address_prefecture}
               </p>
             )}
@@ -83,7 +83,7 @@ export default function UserInformation() {
 
       <div className="flex justify-center">
         <Link to={Path.userEdit}>
-          <Button variant="contained">Edit information</Button>
+          <Button variant="outlined">Edit information</Button>
         </Link>
       </div>
     </div>

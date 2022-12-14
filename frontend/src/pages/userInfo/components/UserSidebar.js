@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SIDEBAR_VALUE = {
   INFOR: Path.userInfo,
@@ -19,7 +19,7 @@ export default function UserSidebar({ props }) {
     setValue(value);
   };
   return (
-    <div className=" bg-white p-6 rounded basis-1/4 h-fit sticky top-12">
+    <div className="bg-white p-6 rounded basis-1/4 h-fit sticky top-12">
       <Box
         sx={{
           width: "100%",

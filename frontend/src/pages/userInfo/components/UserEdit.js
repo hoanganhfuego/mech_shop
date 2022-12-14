@@ -54,7 +54,7 @@ export default function UserEdit() {
     gender: Yup.number().required("user's gender is reuiqred"),
     address_prefecture: Yup.string().required("user's address is required"),
     address_district: Yup.string().required("user's address is required"),
-    address_address: Yup.string().required("user's address is required"),
+    address_street: Yup.string().required("user's address is required"),
   });
 
   const initialValues = userInfo || {
@@ -68,10 +68,10 @@ export default function UserEdit() {
     gender: null,
     address_prefecture: "",
     address_district: "",
-    address_address: "",
+    address_street: "",
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = () => {
     const info = { ...values };
 
     info.name = info.name.trim();
@@ -79,7 +79,7 @@ export default function UserEdit() {
     info.phone = info.phone.trim();
 
     delete info.access_token;
-    delete info.refesh_token;
+    delete info.refresh_token;
 
     updateUserInformation(userInfo.id, info).then((res) => {
       dispatch(updateAuth(values));
@@ -100,14 +100,10 @@ export default function UserEdit() {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
     postImage(formData).then((res) => {
-      const imageUrl = res.data.replace(/\\/g, "/");
-      setFieldValue(
-        "user_avatar",
-        process.env.REACT_APP_API_URL + imageUrl
-      );
+      const imageUrl = res.data[0].replaceAll(/\\/g, "/");
+      setFieldValue("user_avatar", process.env.REACT_APP_API_URL + imageUrl);
     });
   };
-  console.log(values.user_avatar)
 
   useEffect(() => {
     let mounted = true;
@@ -115,7 +111,7 @@ export default function UserEdit() {
       mounted = false;
     };
     if (!getState.loading) {
-      return;
+      return cleanup;
     }
 
     getProvincesAndDistrict()
@@ -140,12 +136,11 @@ export default function UserEdit() {
         }));
       })
       .catch((error) => {
-        console.log("fdjghhgfgfmghfjghfjghfjhgf");
         if (!mounted) return;
         setGetState((prev) => ({
           ...prev,
           loading: false,
-          error: error.message,
+          error: error.response?.data?.message,
         }));
       });
 
@@ -169,7 +164,7 @@ export default function UserEdit() {
                     alt="avatar"
                     className=" aspect-square rounded-full w-[100px]"
                   />
-                  <Button variant="contained" component="label">
+                  <Button variant="outlined" component="label">
                     Change avatar
                     <input
                       type="file"
@@ -409,11 +404,11 @@ export default function UserEdit() {
                     <div className="">
                       <p>Address</p>
                       <TextField
-                        error={Boolean(errors.address_address)}
+                        error={Boolean(errors.address_street)}
                         onChange={(e) =>
-                          setFieldValue("address_address", e.target.value)
+                          setFieldValue("address_street", e.target.value)
                         }
-                        value={values.address_address}
+                        value={values.address_street}
                         size="small"
                         fullWidth
                       />
@@ -422,12 +417,12 @@ export default function UserEdit() {
                   <div className="w-full">
                     <FormHelperText
                       error={Boolean(
-                        errors.address_address ||
+                        errors.address_street ||
                           errors.address_district ||
                           errors.address_prefecture
                       )}
                     >
-                      {errors.address_address ||
+                      {errors.address_street ||
                         errors.address_district ||
                         errors.address_prefecture}
                     </FormHelperText>
