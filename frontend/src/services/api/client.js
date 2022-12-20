@@ -29,7 +29,7 @@ client.interceptors.response.use(
     if (reset) {
       store.dispatch(setAuth(null));
       window.location.href = Path.home;
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
     if (status !== 401) {
       return Promise.reject(error);

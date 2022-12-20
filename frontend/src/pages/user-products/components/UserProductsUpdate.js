@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import ProductModel from "./ProductModel";
 import { updateUserProducts } from "../../../services/api/index";
 
-export default function UserProductShowCase({ products, reloadPage }) {
+export default function UserProductUpdate({ products, reloadPage }) {
   const [currentProduct, setCurrentProduct] = useState(undefined);
   const [openEdit, setOpenEdit] = useState(false);
 

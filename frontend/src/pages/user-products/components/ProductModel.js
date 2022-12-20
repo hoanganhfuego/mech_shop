@@ -1,4 +1,13 @@
-import { Button, Dialog, FormHelperText, TextField } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import Line from "../../../components/Line";
 import { useFormik } from "formik";
@@ -6,6 +15,7 @@ import { useEffect, useState } from "react";
 import { postImage } from "../../../services/common";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
+import constants from "../../../constants/constants";
 
 const validationSchema = Yup.object().shape({
   product_name: Yup.string().required("Product's name is required"),
@@ -21,6 +31,7 @@ const validationSchema = Yup.object().shape({
       "You must have at least 6 pictures of your keyboard, pictures should be taken from different angles"
     )
     .required("Product's picture is required"),
+  product_type: Yup.number().required("Product's type is required"),
 });
 
 export default function ProductModel({
@@ -30,7 +41,7 @@ export default function ProductModel({
   onSave,
   reloadPage,
 }) {
-  const userId = useSelector(state => state.user.auth.id)
+  const auth = useSelector((state) => state.user.auth);
 
   const [sendState, setSendState] = useState({
     loading: false,
@@ -50,6 +61,9 @@ export default function ProductModel({
       product_images: [],
       product_price: "",
       product_description: "",
+      product_type: "",
+      user_avatar: auth.user_avatar,
+      user_name: auth.name
     },
     onSubmit,
     validationSchema,
@@ -88,8 +102,7 @@ export default function ProductModel({
     if (!sendState.loading) {
       return cleanup;
     }
-    console.log("sending...................")
-    onSave(userId, product?.product_id, values)
+    onSave(auth.id, product?.product_id, values)
       .then(() => {
         if (!mounted) return;
         onCloseModel();
@@ -157,6 +170,30 @@ export default function ProductModel({
 
           <Line />
 
+          <div>
+            <p>Product type</p>
+            <FormControl>
+              <RadioGroup
+                value={values.product_type}
+                onChange={(e) => setFieldValue("product_type", Number(e.target.value))}
+              >
+                <div>
+                  {constants.productType.productType.map((type) => {
+                    return (
+                      <FormControlLabel
+                        key={type.type}
+                        control={<Radio value={type.type} />}
+                        label={type.label}
+                      />
+                    );
+                  })}
+                </div>
+              </RadioGroup>
+            </FormControl>
+          </div>
+
+          <Line />
+
           <div className="mb-4">
             <p className="mb-1">Product description: </p>
             <TextField
@@ -193,7 +230,7 @@ export default function ProductModel({
                       </div>
 
                       <img
-                        className="aspect-[270/155] w-full rounded-xl"
+                        className="aspect-image object-cover w-full rounded-xl"
                         key={index}
                         src={image.product_image}
                         alt="product_image"

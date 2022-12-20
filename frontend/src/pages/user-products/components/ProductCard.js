@@ -34,7 +34,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className="flex gap-6 rounded-xl w-full items-center h-[165px] max-w-full">
+    <div className="flex gap-6 rounded-xl w-full items-start h-[270px] max-w-full">
       <Swiper
         className="rounded-xl basis-1/3"
         navigation={true}
@@ -48,9 +48,9 @@ export default function ProductCard({
       >
         {product_images.map((imageUrl, index) => {
           return (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} className="!w-fit !h-fit">
               <img
-                className="!w-full aspect-[270/155]"
+                className="object-cover w-full h-full aspect-image"
                 src={imageUrl.product_image}
                 alt="product"
               />
@@ -58,8 +58,8 @@ export default function ProductCard({
           );
         })}
       </Swiper>
-      <div className="basis-2/3 overflow-y-scroll max-h-full no-scrollbar">
-        <div className="bg-white rounded-xl">
+      <div className="basis-2/3 !overflow-y-scroll max-h-full no-scrollbar">
+        <div className="rounded-xl">
           <div className="flex items-center mb-6 justify-between">
             <p className=" text-xl font-medium text-primary-pink">
               {product_name}

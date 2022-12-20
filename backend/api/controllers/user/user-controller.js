@@ -9,7 +9,7 @@ async function getOneUserInfo(req, res) {
     delete data[0].password;
     res.json(data[0]);
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.message });
   }
 }
 
@@ -19,7 +19,7 @@ async function getUserInfo(req, res) {
     delete data[0].password;
     res.json(data);
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.message });
   }
 }
 
@@ -61,7 +61,7 @@ async function signUp(req, res) {
     delete UserInfo[0].password;
     res.status(200).json({ ...UserInfo[0], access_token, refresh_token });
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.message });
   }
 }
 
@@ -77,7 +77,7 @@ async function login(req, res) {
     if (!Boolean(oldUser.length)) {
       return res
         .status(409)
-        .send({ message: "Your email or password is not correct" });
+        .send({ message: "Your email is not correct" });
     }
     // check if email and password are correct or not
     const [data] = await userModel.findUserEmail({ email }); // get password by req's email
@@ -102,7 +102,7 @@ async function login(req, res) {
       res.status(200).send({ ...data[0], access_token, refresh_token });
     }
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.message });
   }
 }
 
@@ -112,7 +112,7 @@ async function updateUserInformation(req, res) {
     await userModel.updateUserInformation(id, req.body);
     res.status(200).send({ message: "update user's profile success" });
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.message });
   }
 }
 

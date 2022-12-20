@@ -13,7 +13,7 @@ export const login = (body) => {
 };
 
 export const refreshToken = (body) => {
-  return client.post("auth/refresh-token", body);
+  return client.post("api/refresh-token", body);
 };
 
 export const getUserInformation = (id) => {
@@ -37,5 +37,22 @@ export const addUserProducts = (userId, body) => {
 };
 
 export const deleteProduct = (productId) => {
-  return client.delete(`api/user-products/${productId}`)
-}
+  return client.delete(`api/user-products/${productId}`);
+};
+
+export const getProductByType = (type) => {
+  return client.get(`api/product-type/${type}`);
+};
+
+export const getAllProducts = () => {
+  return client.get("api/all-products");
+};
+
+// login with google
+export const getGoogleUserInfo = (credentials) => {
+  return client.get("auth/login/success", credentials);
+};
+
+export const logoutGoogle = (credentials) => {
+  return client.get("auth/logout", credentials);
+};

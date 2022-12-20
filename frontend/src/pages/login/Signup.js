@@ -139,7 +139,7 @@ export default function Signup() {
                 fullWidth
               />
             </div>
-            <Button variant="outlined" type="submit" className="!mb-6 w-full">
+            <Button variant="contained" type="submit" className="!mb-6 w-full">
               Sign up
             </Button>
           </div>

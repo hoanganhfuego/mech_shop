@@ -1,10 +1,13 @@
 const userController = require("../api/controllers/user/user-controller");
 const userProductsController = require("../api/controllers/user/user-products-controller");
-const auth = require("../api/middleware/auth");
+const userCartController = require("../api/controllers/user/user-cart-controller");
+
 const passport = require("passport");
+const auth = require("../api/middleware/auth");
 const generateToken = require("../utils/generateToken");
 const common = require("../api/controllers/common/common");
 const multer = require("multer");
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images/");
@@ -52,6 +55,28 @@ const routes = (app) => {
       userProductsController.deleteProduct
     );
 
+    //products
+    app.get("/all-products", userProductsController.getAllProducts);
+    app.get("/product-type/:type", userProductsController.getProductByType);
+
+    //cart
+    app.get("/cart-products", auth.verifyToken, userCartController.getUserCart);
+    app.post(
+      "/cart-products/user/:userId/product/:productId",
+      auth.verifyToken,
+      userCartController.addProductToCart
+    );
+    app.delete(
+      "/cart-products/:cartId",
+      auth.verifyToken,
+      userCartController.deleteProductInCart
+    );
+    app.patch(
+      "/cart-products/:cartId",
+      auth.verifyToken,
+      userCartController.updateQuantity
+    );
+
     // signup and login
     app.post("/signup", userController.signUp);
     app.post("/login", userController.login);
@@ -63,9 +88,7 @@ const routes = (app) => {
       upload.array("file", 10),
       common.postImage
     );
-  });
 
-  app.namespace("/auth", function () {
     // auth with normal login method
     app.post("/refresh-token", auth.verifyRefreshToken, (req, res) => {
       const { id, email } = req.body;
@@ -76,22 +99,37 @@ const routes = (app) => {
         .status(200)
         .send({ access_token: generateToken.access_token({ id, email }) });
     });
+  });
 
-    // auth with google
+  app.namespace("/auth", function () {
+    app.get("/google", passport.authenticate("google", ["profile", "email"]));
+
     app.get(
       "/google/callback",
-      passport.authenticate(
-        "google",
-        {
-          successRedirect: process.env.CLIENT_URL,
-          failureMessage: true,
-        },
-        () => {
-          console.log("fail to login");
-        }
-      )
+      passport.authenticate("google", {
+        successRedirect: process.env.CLIENT_URL,
+        failureRedirect: "/login/failed",
+      }),
+      (req, res) => {
+        res.send("Thank you for signing in!");
+      }
     );
-    app.get("/google", passport.authenticate("google", ["profile", "email"]));
+
+    app.get("/login/success", (req, res) => {
+      if (req.user) {
+        res.status(200).json(req.user);
+      } else {
+        res.status(403).json({ error: true, message: "Not Authorized" });
+      }
+    });
+
+    app.get("login/failed", (req, res) => {
+      res.status(401).json({
+        error: true,
+        message: "Log in failure",
+      });
+    });
+
     app.get("/logout", (req, res) => {
       req.logout();
       res.redirect(process.env.CLIENT_URL);

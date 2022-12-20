@@ -31,10 +31,15 @@ async function getUserInfo() {
 }
 
 async function signUp({ name, email, password }) {
-  const query =
-    "INSERT INTO `user` (`name`, `email`, `password`) VALUES (?, ?, ?);";
-  return await db.query(query, [name, email, password]);
-  s;
+  if (password) {
+    const query =
+      "INSERT INTO `user` (`name`, `email`, `password`) VALUES (?, ?, ?);";
+    return await db.query(query, [name, email, password]);
+  } else {
+    const query = "INSERT INTO `user` (`name`, `email`) VALUES (?, ?);";
+    return await db.query(query, [name, email]);
+    s;
+  }
 }
 
 async function login({ email, password }) {

@@ -1,14 +1,15 @@
-import { Button, TextField, Snackbar } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
+import { Button, TextField, Snackbar } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { login } from "../../services/api";
 import Path from "../../route/Path";
 import { setAuth } from "../../redux/userReducer";
-import { useEffect, useState } from "react";
 
 export default function Login() {
   const [sendState, setSendState] = useState({
@@ -38,9 +39,8 @@ export default function Login() {
     },
     onSubmit,
   });
-
   const authGoogle = () => {
-    window.open(`${process.env.REACT_APP_API_URL}/auth/google/callback`);
+    window.open(`${process.env.REACT_APP_API_URL}auth/google`, "_self");
   };
 
   useEffect(() => {
@@ -51,7 +51,6 @@ export default function Login() {
     if (!sendState.loading) {
       return cleanup;
     }
-
     const info = { ...values };
 
     info.email = info.email.trim();
@@ -117,7 +116,7 @@ export default function Login() {
               variant="contained"
               type="submit"
               size="medium"
-              className="!mb-6 !min-w-[80px] !h-[40px]"
+              className="!mb-6 !min-w-[80px] !h-[40px] w-full"
             >
               {sendState.loading ? (
                 <CircularProgress
@@ -138,9 +137,15 @@ export default function Login() {
             >
               Login with Google
             </Button>
-            <Button variant="contained" type="button" className="!mb-6 w-full">
-              <Link to={Path.signup}>Sign up</Link>
-            </Button>
+            <Link to={Path.signup} className="w-full">
+              <Button
+                variant="contained"
+                type="button"
+                className="!mb-6 w-full"
+              >
+                Sign up
+              </Button>
+            </Link>
           </div>
         </form>
       </div>

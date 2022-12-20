@@ -1,13 +1,19 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { Button } from "@mui/material";
 
 export default function CardItem(props) {
-  const { productName, productImages, favorite, price, ownerImage, ownerName } =
-    props.item;
+  const { product_name, product_images, product_price, user_avatar, user_name } = props.item;
   return (
-    <div>
+    <div className="w-full relative">
+      <div className="!absolute !z-10 w-fit right-0 top-0 rounded-full">
+        <Button variant="text !text-white !min-w-min !z-10 !rounded-full">
+          <AddShoppingCartIcon />
+        </Button>
+      </div>
       <Swiper
-        className="rounded-xl"
+        className="rounded-xl !w-full"
         navigation={true}
         modules={[Navigation, Pagination, Autoplay]}
         pagination={{
@@ -17,28 +23,31 @@ export default function CardItem(props) {
         slidesPerView={1}
         spaceBetween={0}
       >
-        {productImages.map((image, index) => {
+        {product_images?.map((image, index) => {
           return (
-            <SwiperSlide key={index}>
-              <img
-                className="aspect-square"
-                src="https://i.pinimg.com/564x/68/a7/cd/68a7cd011d98c6e6599dfe3a769465e5.jpg"
-                alt="product"
-              />
+            <SwiperSlide key={index} className="!w-full">
+              <picture>
+                <img
+                  className="object-cover w-full h-full aspect-image"
+                  src={image.product_image}
+                  alt="product"
+                />
+              </picture>
             </SwiperSlide>
           );
         })}
       </Swiper>
       <div>
-        <span>{productName}</span>
-        <span className=" float-right">{price}</span>
+        <span>{product_name}</span>
+        <span className=" float-right">{product_price}</span>
       </div>
       <div className="flex items-center justify-between">
         <img
-          src="https://i.pinimg.com/564x/68/a7/cd/68a7cd011d98c6e6599dfe3a769465e5.jpg"
+          src={user_avatar}
           className="w-7 aspect-square rounded-full"
+          alt="user avatar"
         ></img>
-        <span>{ownerName}</span>
+        <span>{user_name}</span>
       </div>
     </div>
   );

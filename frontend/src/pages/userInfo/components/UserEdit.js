@@ -80,11 +80,13 @@ export default function UserEdit() {
 
     delete info.access_token;
     delete info.refresh_token;
-
-    updateUserInformation(userInfo.id, info).then((res) => {
-      dispatch(updateAuth(values));
-      navigate(Path.userInfo);
-    });
+    
+    updateUserInformation(userInfo.id, info)
+      .then((res) => {
+        dispatch(updateAuth(values));
+        navigate(Path.userInfo);
+      })
+      .catch((error) => console.log(error));
   };
   const { values, errors, setFieldValue, handleSubmit } = useFormik({
     validateOnBlur: false,
@@ -402,7 +404,7 @@ export default function UserEdit() {
                       </div>
                     </div>
                     <div className="">
-                      <p>Address</p>
+                      <p>Street</p>
                       <TextField
                         error={Boolean(errors.address_street)}
                         onChange={(e) =>

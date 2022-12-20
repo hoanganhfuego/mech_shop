@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getUserProducts } from "../../../services/api/index";
 import UserProductsAdd from "./UserProductsAdd";
-import UserProductShowCase from "./UserProductsShowCase";
+import UserProductShowCase from "./UserProductsUpdate";
 
 export default function Main() {
   const auth = useSelector((state) => state.user.auth);

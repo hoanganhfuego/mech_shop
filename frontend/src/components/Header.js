@@ -8,8 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@mui/material";
 import Path from "../route/Path";
-import { logout } from "../services/api/index";
 import { setAuth } from "../redux/userReducer";
+import Filter from "./Filter";
+import Line from "./Line";
+import { logoutGoogle } from "../services/api/index";
 
 const navBarContent = [
   {
@@ -62,9 +64,10 @@ export default function Header() {
   const onLogOut = () => {
     dispatch(setAuth(null));
     navigate(Path.home);
+    window.open(`${process.env.REACT_APP_API_URL}auth/logout`, "_self");
   };
   return (
-    <div className="w-full flex justify-center py-2 sticky top-0 bg-white z-50">
+    <div className="w-full flex flex-col items-center pt-4 sticky top-0 bg-white z-50">
       <div className="w-1200 flex justify-between items-center">
         <Link to="/">
           <h1 className=" font-extrabold text-4xl text-primary-pink cursor-pointer">
@@ -166,6 +169,8 @@ export default function Header() {
           </Popover>
         )}
       </div>
+      <Line />
+      <Filter />
     </div>
   );
 }

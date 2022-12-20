@@ -26,18 +26,25 @@ async function addProductImages(product_image, product_id, user_id) {
 }
 
 //products
+async function getAllProduct() {
+  const query = "SELECT * FROM `products`";
+  return db.query(query);
+}
+
 async function updateProduct(
   product_id,
   product_name,
   product_price,
-  product_description
+  product_description,
+  product_type
 ) {
   const query =
-    "UPDATE products SET product_name = ?, product_price = ?, product_description = ? where product_id = ?";
+    "UPDATE products SET product_name = ?, product_price = ?, product_description = ?, product_type = ? where product_id = ?";
   return await db.query(query, [
     product_name,
     product_price,
     product_description,
+    product_type,
     product_id,
   ]);
 }
@@ -46,7 +53,10 @@ async function addProduct(
   user_id,
   product_name,
   product_price,
-  product_description
+  product_description,
+  product_type,
+  user_avatar,
+  user_name
 ) {
   const options = {
     weekday: "long",
@@ -56,13 +66,16 @@ async function addProduct(
   };
   const create_date = new Date().toLocaleDateString("en-US", options);
   const query =
-    "INSERT INTO `products` (`product_name`, `product_price`, `user_id`, `create_date`, `product_description`) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO `products` (`product_name`, `product_price`, `user_id`, `create_date`, `product_description`, `product_type`, `user_avatar`, `user_name`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   return await db.query(query, [
     product_name,
     product_price,
     user_id,
     create_date,
     product_description,
+    product_type,
+    user_avatar,
+    user_name,
   ]);
 }
 
@@ -71,7 +84,15 @@ async function deleteProduct(product_id) {
   return db.query(query, [product_id]);
 }
 
+//get product by its type
+async function getProductByType(product_type) {
+  const query = "SELECT * FROM products WHERE product_type = ?";
+  return db.query(query, [product_type]);
+}
+
 module.exports = {
+  getAllProduct,
+  getProductByType,
   deleteProduct,
   addProduct,
   updateProduct,

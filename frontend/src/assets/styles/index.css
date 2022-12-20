@@ -6,3 +6,55 @@
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+.swiper-pagination-bullet {
+    background-color: white;
+}
+
+.swiper-button-disabled {
+    display: none!important;
+}
+
+.swiper:hover .swiper-button-next {
+    display: flex;
+}
+
+.swiper:hover .swiper-button-prev {
+    display: flex;
+}
+
+.swiper-button-prev, .swiper-button-next {
+    color: #222222;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    transition: all linear 0.2s;
+    background-color: white;
+    opacity: 0.5;
+    box-shadow: transparent 0px 0px 0px 1px, transparent0px 0px 0px 4px, rgba(0, 0, 0, 0.18) 0px 2px 4px;
+    display: none;
+}
+
+.swiper-button-prev:hover, .swiper-button-next:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.swiper-button-prev:after, .swiper-button-next:after {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.navbar-underline-container:hover .navbar-underline:after{
+    display: block;
+}
+
+.navbar-underline:after{
+    display: none;
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    border: solid 1px rgb(163, 159, 159);
+    width: 100%;
+}

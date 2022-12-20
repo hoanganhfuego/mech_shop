@@ -1,57 +1,109 @@
-import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
-import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
-import mockApi from "./mockApi";
-import CardItem from "./components/CardItem";
-import { useState, useRef, useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper";
-import { getUser } from "../../services/api";
+import { useState, useEffect } from "react";
+import { setAuth } from "../../redux/userReducer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getProductByType,
+  getAllProducts,
+  getGoogleUserInfo,
+} from "../../services/api/index";
+import constants from "../../constants/constants";
+import UseGetSearchParams from "../../ultis/queryParams";
+import ProductRender from "./components/ProductsRender";
 
 export default function Main() {
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
-  const [getState, useGetState] = useState({
+  const auth = useSelector((state) => state.user.auth);
+  const dispatch = useDispatch();
+  const [searchParams] = UseGetSearchParams();
+  const [getState, setGetState] = useState({
     loading: true,
-    error: false,
-    values: {},
+    error: "",
+    values: [],
   });
+
   useEffect(() => {
-    // getUser();
-  });
+    setGetState((prev) => ({ ...prev, loading: true }));
+  }, [searchParams.type]);
+
+  useEffect(() => {
+    let mounted = true;
+    const cleanup = () => {
+      mounted = false;
+    };
+
+    if (auth) {
+      return cleanup;
+    }
+
+    getGoogleUserInfo({ withCredentials: true }).then((res) => {
+      if (!mounted) return;
+      dispatch(setAuth(res.data));
+    });
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
+
+  useEffect(() => {
+    let mounted = true;
+    const cleanup = () => {
+      mounted = false;
+    };
+
+    if (!getState.loading) {
+      return cleanup;
+    }
+
+    if (!searchParams.type || searchParams.type === "all_products") {
+      getAllProducts()
+        .then((res) => {
+          if (!mounted) return;
+          setGetState({
+            loading: false,
+            error: "",
+            values: res.data,
+          });
+        })
+        .catch((error) => {
+          if (!mounted) return;
+          setGetState({
+            values: [],
+            error: error.response?.data?.message,
+          });
+        });
+    } else {
+      getProductByType(
+        constants.productType.typeParam[searchParams.type]?.value
+      )
+        .then((res) => {
+          if (!mounted) return;
+          setGetState({
+            loading: false,
+            error: "",
+            values: res.data,
+          });
+        })
+        .catch((error) => {
+          if (!mounted) return;
+          setGetState({
+            values: [],
+            error: error.response?.data?.message,
+          });
+        });
+    }
+
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getState.loading]);
+
+  // const
+  // useEffect(() => {
+  //   let mounted = true
+  //   getGoogleUserInfo({ withCredentials: true }).then((res) =>
+  //     console.log(res)
+  //   );
+  // }, []);
   return (
     <div className="w-full flex justify-center py-20 bg-white">
-      <div className="w-1200">
-        <div>
-          <h1 className="mb-6">New products</h1>
-          <div className="flex justify-between">
-            <button className="button-prev">
-              <NavigateBeforeOutlinedIcon />
-            </button>
-
-            <Swiper
-              modules={[Pagination, Navigation]}
-              spaceBetween={12}
-              slidesPerView={6}
-              navigation={{
-                nextEl: ".button-next",
-                prevEl: ".button-prev",
-              }}
-            >
-              {mockApi.map((item, index) => {
-                return (
-                  <SwiperSlide key={index}>
-                    <CardItem item={item} />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-
-            <button className="button-next">
-              <NavigateNextOutlinedIcon />
-            </button>
-          </div>
-        </div>
-      </div>
+      <ProductRender products={getState.values} searchParams={searchParams} />
     </div>
   );
 }
