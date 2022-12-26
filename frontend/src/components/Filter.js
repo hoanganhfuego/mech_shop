@@ -1,60 +1,35 @@
 import UseGetSearchParams from "../ultis/queryParams";
+import { Link } from "react-router-dom";
+import constants from "../constants/constants";
 
 export default function Filter() {
   const [searchParams, setSearchParams] = UseGetSearchParams();
 
   return (
-    <div className="w-1200 flex justify-between items-center mb-6">
-      <div
-        role="button"
-        className="relative navbar-underline-container"
-        onClick={() => {
-          setSearchParams({ ...searchParams, type: "all_products" });
-        }}
-      >
+    <div className="w-1200 flex gap-8 justify-center py-4 text-lg font-medium">
+      <div role="button" className="relative navbar-underline-container text-center">
         <span className="navbar-underline" />
-        All products
+        {!searchParams.type && <span className="navbar-underline-type" />}
+        <Link to="/">All products</Link>
       </div>
-      <div
-        role="button"
-        className="relative navbar-underline-container"
-        onClick={() => {
-          setSearchParams({ ...searchParams, type: "custom_kits" });
-        }}
-      >
-        <span className="navbar-underline" />
-        Custom kits
-      </div>
-      <div
-        role="button"
-        className="relative navbar-underline-container"
-        onClick={() => {
-          setSearchParams({ ...searchParams, type: "keycap" });
-        }}
-      >
-        <span className="navbar-underline" />
-        Keycap
-      </div>
-      <div
-        role="button"
-        className="relative navbar-underline-container"
-        onClick={() => {
-          setSearchParams({ ...searchParams, type: "switch" });
-        }}
-      >
-        <span className="navbar-underline" />
-        Switch
-      </div>
-      <div
-        role="button"
-        className="relative navbar-underline-container"
-        onClick={() => {
-          setSearchParams({ ...searchParams, type: "accessory" });
-        }}
-      >
-        <span className="navbar-underline" />
-        Accessory
-      </div>
+      {constants.productType.productType.map((type) => {
+        return (
+          <div
+            key={type.type}
+            role="button"
+            className="relative navbar-underline-container text-center"
+            onClick={() => {
+              setSearchParams({ type: type.type });
+            }}
+          >
+            {Number(searchParams.type) === type.type && (
+              <span className="navbar-underline-type" />
+            )}
+            <span className="navbar-underline" />
+            {type.label}
+          </div>
+        );
+      })}
     </div>
   );
 }

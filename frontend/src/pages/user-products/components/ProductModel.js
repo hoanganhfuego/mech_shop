@@ -7,21 +7,27 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  InputAdornment,
 } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import Line from "../../../components/Line";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef } from "react";
 import { postImage } from "../../../services/common";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import constants from "../../../constants/constants";
+import Slide from "@mui/material/Slide";
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const validationSchema = Yup.object().shape({
   product_name: Yup.string().required("Product's name is required"),
   product_price: Yup.number().required("Product's price is required"),
   product_description: Yup.string()
-    .max(200, "Character limit is 200")
+    .max(400, "Character limit is 200")
     .required(
       "Product's description is required, please make sure that buyers can know how the condition of your key board is"
     ),
@@ -32,6 +38,7 @@ const validationSchema = Yup.object().shape({
     )
     .required("Product's picture is required"),
   product_type: Yup.number().required("Product's type is required"),
+  product_quantity: Yup.number().required("Product's quantity is required"),
 });
 
 export default function ProductModel({
@@ -52,7 +59,7 @@ export default function ProductModel({
     setSendState((prev) => ({ ...prev, loading: true }));
   };
 
-  const { values, errors, setFieldValue, handleSubmit } = useFormik({
+  const { values, errors, setFieldValue, handleSubmit, resetForm } = useFormik({
     validateOnBlur: false,
     validateOnChange: false,
     validateOnMount: false,
@@ -63,7 +70,8 @@ export default function ProductModel({
       product_description: "",
       product_type: "",
       user_avatar: auth.user_avatar,
-      user_name: auth.name
+      user_name: auth.name,
+      product_quantity: "",
     },
     onSubmit,
     validationSchema,
@@ -102,9 +110,11 @@ export default function ProductModel({
     if (!sendState.loading) {
       return cleanup;
     }
-    onSave(auth.id, product?.product_id, values)
+
+    onSave(auth?.id, product?.product_id, values)
       .then(() => {
         if (!mounted) return;
+        resetForm();
         onCloseModel();
         reloadPage();
         setSendState({
@@ -113,6 +123,7 @@ export default function ProductModel({
         });
       })
       .catch((error) => {
+        if (!mounted) return;
         setSendState({
           loading: false,
           error: error.response?.data?.message,
@@ -124,13 +135,23 @@ export default function ProductModel({
   }, [sendState.loading]);
 
   return (
-    <Dialog open={open} onClose={onCloseModel} fullWidth maxWidth="lg">
+    <Dialog
+      open={open}
+      onClose={() => {
+        onCloseModel();
+        resetForm();
+      }}
+      fullWidth
+      maxWidth="lg"
+      TransitionComponent={Transition}
+    >
       <div className=" p-6">
         <div className="flex justify-between mb-8">
           <p className=" uppercase font-medium text-xl">add product</p>
           <Button
             className="!min-w-min relative -top-4 -right-4"
             onClick={onCloseModel}
+            disabled={sendState.loading}
           >
             <CloseOutlinedIcon color="primary" />
           </Button>
@@ -151,7 +172,9 @@ export default function ProductModel({
             />
           </div>
 
-          <Line />
+          <div className="py-6">
+            <Line />
+          </div>
 
           <div className="mb-4">
             <p className="mb-1">Product price: </p>
@@ -165,17 +188,45 @@ export default function ProductModel({
               size="small"
               fullWidth
               type="text"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
             />
           </div>
 
-          <Line />
+          <div className="py-6">
+            <Line />
+          </div>
+
+          <div className="mb-4">
+            <p className="mb-1">Quantity: </p>
+            <TextField
+              value={values.product_quantity}
+              error={Boolean(errors.product_quantity)}
+              helperText={errors.product_quantity}
+              onChange={(e) => {
+                setFieldValue("product_quantity", e.target.value);
+              }}
+              size="small"
+              fullWidth
+              type="number"
+            />
+          </div>
+
+          <div className="py-6">
+            <Line />
+          </div>
 
           <div>
-            <p>Product type</p>
+            <p>Product type: </p>
             <FormControl>
               <RadioGroup
                 value={values.product_type}
-                onChange={(e) => setFieldValue("product_type", Number(e.target.value))}
+                onChange={(e) =>
+                  setFieldValue("product_type", Number(e.target.value))
+                }
               >
                 <div>
                   {constants.productType.productType.map((type) => {
@@ -190,9 +241,17 @@ export default function ProductModel({
                 </div>
               </RadioGroup>
             </FormControl>
+            <FormHelperText
+              className="w-full"
+              error={Boolean(errors.product_type)}
+            >
+              {errors.product_type}
+            </FormHelperText>
           </div>
 
-          <Line />
+          <div className="py-6">
+            <Line />
+          </div>
 
           <div className="mb-4">
             <p className="mb-1">Product description: </p>
@@ -211,7 +270,9 @@ export default function ProductModel({
             />
           </div>
 
-          <Line />
+          <div className="py-6">
+            <Line />
+          </div>
 
           <div className="mb-4">
             <p className="mb-1">Product images: </p>
@@ -258,10 +319,16 @@ export default function ProductModel({
             </FormHelperText>
           </div>
 
-          <Line />
+          <div className="py-6">
+            <Line />
+          </div>
 
           <div className="flex justify-center">
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={sendState.loading}
+            >
               Submit
             </Button>
           </div>

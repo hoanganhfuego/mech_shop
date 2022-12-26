@@ -2,7 +2,6 @@ import axios from "axios";
 import store from "../../redux/store";
 import { refreshToken } from "./index";
 import { setAuth, updateAuth } from "../../redux/userReducer";
-import Path from "../../route/Path";
 
 const client = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -25,26 +24,24 @@ client.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    const reset = error.response?.data?.reset_refresh_token || null;
-    if (reset) {
-      store.dispatch(setAuth(null));
-      window.location.href = Path.home;
-      return Promise.reject(error);
-    }
-    if (status !== 401) {
-      return Promise.reject(error);
+    if (status === 401) {
+      if (error.request?.responseURL?.indexOf("/refresh-token") < 0) {
+        return (
+          refreshToken(store.getState().user.auth)
+            .then((res) => {
+              store.dispatch(updateAuth(res.data));
+              error.response.config.headers["x-access-token"] =
+                res.data.access_token;
+              return axios(error.response.config);
+            })
+        );
+      } else {
+        store.dispatch(setAuth(null));
+        window.open(`${process.env.REACT_APP_API_URL}auth/logout`, "_self");
+        return Promise.reject(error);
+      }
     } else {
-      return refreshToken(store.getState().user.auth)
-        .catch((err) => {
-          store.dispatch(setAuth(null));
-          return Promise.reject(err);
-        })
-        .then((res) => {
-          store.dispatch(updateAuth(res.data));
-          error.response.config.headers["x-access-token"] =
-            res.data.access_token;
-          return axios(error.response.config);
-        });
+      return Promise.reject(error);
     }
   }
 );

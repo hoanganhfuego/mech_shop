@@ -7,8 +7,8 @@ export default function UserProductUpdate({ products, reloadPage }) {
   const [currentProduct, setCurrentProduct] = useState(undefined);
   const [openEdit, setOpenEdit] = useState(false);
 
-  const onSave = useCallback((userId, productId, data) => {
-    return updateUserProducts(userId, productId, data);
+  const onSave = useCallback((user_id, product_id, data) => {
+    return updateUserProducts(user_id, product_id, data);
   }, []);
 
   const getEditProduct = (data) => {

@@ -88,7 +88,9 @@ export default function Signup() {
 
   return (
     <div>
-      <Header />
+      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50">
+        <Header />
+      </div>
       <div className="w-full flex justify-center mt-6">
         <form onSubmit={handleSubmit}>
           <div className=" w-96 flex items-center flex-col">

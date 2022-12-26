@@ -6,8 +6,8 @@ import { addUserProducts } from "../../../services/api/index";
 export default function UserProductsAdd({ reloadPage }) {
   const [open, setOpen] = useState(false);
 
-  const onSave = (userId, _, data) => {
-    return addUserProducts(userId, data);
+  const onSave = (user_id, _, data) => {
+    return addUserProducts(user_id, data);
   };
 
   const onCloseModel = () => {

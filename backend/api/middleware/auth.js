@@ -12,10 +12,10 @@ async function verifyToken(req, res, next) {
       req.user = user;
       next();
     } catch (error) {
-      res.status(401).send({ error, message: "unauthorized" });
+      res.status(401).send({ message: error.message });
     }
   } else {
-    return res.status(400).send("invalid request");
+    return res.status(401).send("a request was sent without access token");
   }
 }
 
@@ -31,10 +31,10 @@ async function verifyRefreshToken(req, res, next) {
       req.user = user;
       next();
     } catch (error) {
-      res.status(401).send({ error, message: "unauthorized", reset_refresh_token: true });
+      res.status(401).send({ message: error.message });
     }
   } else {
-    return res.status(400).send("invalid request");
+    return res.status(401).send("a request was sent without refresh token");
   }
 }
 

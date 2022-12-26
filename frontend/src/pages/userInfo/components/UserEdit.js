@@ -80,7 +80,7 @@ export default function UserEdit() {
 
     delete info.access_token;
     delete info.refresh_token;
-    
+
     updateUserInformation(userInfo.id, info)
       .then((res) => {
         dispatch(updateAuth(values));
@@ -151,7 +151,9 @@ export default function UserEdit() {
 
   return (
     <div>
-      <Header />
+      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50">
+        <Header />
+      </div>
       <Banner />
       <div className="w-full flex justify-center bg-primary-grey">
         <div className="w-1200 relative -top-12 bg-white p-6 rounded">
@@ -178,7 +180,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Name : </p>
@@ -195,7 +199,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Gender : </p>
@@ -226,7 +232,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Day of birth :</p>
@@ -323,7 +331,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Email :</p>
@@ -340,7 +350,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Address :</p>
@@ -432,7 +444,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex items-start">
                 <p className="basis-1/3">Phone number :</p>
@@ -449,7 +463,9 @@ export default function UserEdit() {
                 </div>
               </div>
 
-              <Line />
+              <div className="py-6">
+                <Line />
+              </div>
 
               <div className="flex justify-center">
                 <Button type="submit" variant="contained">

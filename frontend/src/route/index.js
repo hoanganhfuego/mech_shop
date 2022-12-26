@@ -5,6 +5,8 @@ import UserInfo from "../pages/userInfo";
 import UserEdit from "../pages/userInfo/components/UserEdit";
 import UserProducts from "../pages/user-products";
 import { Login, Signup } from "../pages/login";
+import Cart from "../pages/cart";
+import Checkout from "../pages/checkout";
 
 export default function AppRoute() {
   return (
@@ -15,6 +17,8 @@ export default function AppRoute() {
       <Route path={Path.userInfo} element={<UserInfo />} />
       <Route path={Path.userProducts} element={<UserProducts />} />
       <Route path={Path.userEdit} element={<UserEdit />} />
+      <Route path={Path.cart} element={<Cart />} />
+      <Route path={Path.checkOut} element={<Checkout />} />
     </Routes>
   );
 }

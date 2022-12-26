@@ -28,24 +28,20 @@ export const getUserProducts = (id) => {
   return client.get(`api/user-products/${id}`);
 };
 
-export const updateUserProducts = (userId, productId, body) => {
-  return client.patch(`api/user-products/${userId}/product/${productId}`, body);
+export const updateUserProducts = (user_id, product_id, body) => {
+  return client.patch(`api/user-products/${user_id}/product/${product_id}`, body);
 };
 
-export const addUserProducts = (userId, body) => {
-  return client.post(`api/user-products/${userId}`, body);
+export const addUserProducts = (user_id, body) => {
+  return client.post(`api/user-products/${user_id}`, body);
 };
 
-export const deleteProduct = (productId) => {
-  return client.delete(`api/user-products/${productId}`);
+export const deleteProduct = (product_id) => {
+  return client.delete(`api/user-products/${product_id}`);
 };
 
-export const getProductByType = (type) => {
-  return client.get(`api/product-type/${type}`);
-};
-
-export const getAllProducts = () => {
-  return client.get("api/all-products");
+export const getAllProducts = ({ type = 0, page = 1 }) => {
+  return client.get(`api/all-products/?type=${type}&page=${page}`);
 };
 
 // login with google
@@ -55,4 +51,24 @@ export const getGoogleUserInfo = (credentials) => {
 
 export const logoutGoogle = (credentials) => {
   return client.get("auth/logout", credentials);
+}; 
+
+//cart
+export const getUserCart = (user_id, page=0, rows_per_page=5) => {
+  return client.get(`api/cart-products/${user_id}/?page=${page}&rows_per_page=${rows_per_page}`);
+};
+
+export const addToCart = (user_id, product_id, body) => {
+  return client.post(
+    `api/cart-products/user/${user_id}/product/${product_id}`,
+    body
+  );
+};
+
+export const deleteCart = (cartIds) => {
+  return client.delete(`api/cart-products/delete/?cart_id=${cartIds}`);
+};
+
+export const updateCartQuantity = (cart_id, quantity) => {
+  return client.patch(`api/cart-products/cart_id/${cart_id}/quantity/${quantity}`);
 };

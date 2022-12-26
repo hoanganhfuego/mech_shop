@@ -40,39 +40,38 @@ const routes = (app) => {
       userProductsController.getUserProducts
     );
     app.patch(
-      "/user-products/:userId/product/:productId",
+      "/user-products/:user_id/product/:product_id",
       auth.verifyToken,
       userProductsController.updateUserProduct
     );
     app.post(
-      "/user-products/:userId",
+      "/user-products/:user_id",
       auth.verifyToken,
       userProductsController.addProduct
     );
     app.delete(
-      "/user-products/:productId",
+      "/user-products/:product_id",
       auth.verifyToken,
       userProductsController.deleteProduct
     );
 
     //products
     app.get("/all-products", userProductsController.getAllProducts);
-    app.get("/product-type/:type", userProductsController.getProductByType);
 
     //cart
-    app.get("/cart-products", auth.verifyToken, userCartController.getUserCart);
+    app.get("/cart-products/:user_id", auth.verifyToken, userCartController.getUserCart);
     app.post(
-      "/cart-products/user/:userId/product/:productId",
+      "/cart-products/user/:user_id/product/:product_id",
       auth.verifyToken,
       userCartController.addProductToCart
     );
     app.delete(
-      "/cart-products/:cartId",
+      "/cart-products/delete",
       auth.verifyToken,
       userCartController.deleteProductInCart
     );
     app.patch(
-      "/cart-products/:cartId",
+      "/cart-products/cart_id/:cart_id/quantity/:quantity",
       auth.verifyToken,
       userCartController.updateQuantity
     );
@@ -102,7 +101,10 @@ const routes = (app) => {
   });
 
   app.namespace("/auth", function () {
-    app.get("/google", passport.authenticate("google", ["profile", "email"]));
+    app.get("/google", passport.authenticate("google", {
+      scope: ["profile", "email"],
+      prompt: "select_account"
+    }));
 
     app.get(
       "/google/callback",
@@ -119,12 +121,12 @@ const routes = (app) => {
       if (req.user) {
         res.status(200).json(req.user);
       } else {
-        res.status(403).json({ error: true, message: "Not Authorized" });
+        res.status(403).json({ error: true, message: "Unauthorized" });
       }
     });
 
     app.get("login/failed", (req, res) => {
-      res.status(401).json({
+      res.status(403).json({
         error: true,
         message: "Log in failure",
       });

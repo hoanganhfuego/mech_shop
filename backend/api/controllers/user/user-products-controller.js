@@ -29,7 +29,7 @@ async function getUserProducts(req, res) {
 
 async function updateUserProduct(req, res) {
   try {
-    const { userId, productId } = req.params;
+    const { user_id, product_id } = req.params;
     const {
       product_name,
       product_price,
@@ -38,20 +38,16 @@ async function updateUserProduct(req, res) {
       product_type,
     } = req.body;
     await userProductsModels.updateProduct(
-      productId,
+      product_id,
       product_name,
       product_price,
       product_description,
       product_type
     );
-    await userProductsModels.deleteAllProductImages(userId, productId);
-    for (let i = 0; i < product_images.length; i++) {
-      await userProductsModels.addProductImages(
-        product_images[i].product_image,
-        productId,
-        userId
-      );
-    }
+    await userProductsModels.deleteAllProductImages(product_id);
+    await userProductsModels.addProductImages(
+      product_images.map((item) => [item.product_image, product_id, user_id])
+    );
     res.status(200).send({ message: "update product success" });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -60,7 +56,7 @@ async function updateUserProduct(req, res) {
 
 async function addProduct(req, res) {
   try {
-    const user_id = req.params.userId;
+    const user_id = req.params.user_id;
     const {
       product_name,
       product_price,
@@ -69,6 +65,7 @@ async function addProduct(req, res) {
       product_type,
       user_avatar,
       user_name,
+      product_quantity,
     } = req.body;
     const [data] = await userProductsModels.addProduct(
       user_id,
@@ -77,16 +74,16 @@ async function addProduct(req, res) {
       product_description,
       product_type,
       user_avatar,
-      user_name
+      user_name,
+      product_quantity
     );
     const product_id = data.insertId;
-    for (let i = 0; i < product_images.length; i++) {
-      await userProductsModels.addProductImages(
-        product_images[i].product_image,
-        product_id,
-        user_id
-      );
-    }
+    const array_product_images = product_images.map((item) => [
+      item.product_image,
+      product_id,
+      user_id,
+    ]);
+    await userProductsModels.addProductImages(array_product_images);
     res.status(200).send({ message: "add product success" });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -95,7 +92,7 @@ async function addProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const product_id = req.params.productId;
+    const product_id = req.params.product_id;
     await userProductsModels.deleteProduct(product_id);
     res.status(200).send({ message: "delete product success" });
   } catch (error) {
@@ -103,28 +100,33 @@ async function deleteProduct(req, res) {
   }
 }
 
-async function getProductByType(req, res) {
+async function getAllProducts(req, res) {
   try {
-    const type = req.params.type;
-    const [data] = await userProductsModels.getProductByType(type);
-    const products = await getImages(data);
-    return res.status(200).send(products);
+    const { type, page } = req.query;
+    const data = await userProductsModels.getAllProduct(
+      Number(type),
+      15,
+      Number(page)
+    );
+    const products = await getImages(data.products);
+
+    const total_product = data.total_product;
+    const product_per_page = 15;
+    const page_number = Math.ceil(total_product / product_per_page);
+
+    res.status(200).send({
+      products: products,
+      total_product,
+      product_per_page,
+      page_number,
+    });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 }
 
-async function getAllProducts(req, res) {
-  try {
-    const [data] = await userProductsModels.getAllProduct();
-    const products = await getImages(data);
-    res.status(200).send(products);
-  } catch (error) {}
-}
-
 module.exports = {
   getAllProducts,
-  getProductByType,
   deleteProduct,
   addProduct,
   getUserProducts,

@@ -4,7 +4,9 @@ const Path = {
   signup: "/signup",
   userInfo: "/user-information",
   userEdit: "/user-information/edit",
-  userProducts: "/user-products"
+  userProducts: "/user-products",
+  cart: "/cart",
+  checkOut: "/check-out",
 };
 
 export default Path;

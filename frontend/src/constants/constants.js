@@ -8,10 +8,6 @@ constants.gender = {
 constants.productType = {
   productType: [
     {
-      type: 0,
-      label: "All products",
-    },
-    {
       type: 1,
       label: "Custom kits",
     },
@@ -25,28 +21,6 @@ constants.productType = {
       label: "Switch",
     },
   ],
-  typeParam: {
-    all_product: {
-      value: 0,
-      label: "All products",
-    },
-    custom_kits: {
-      value: 1,
-      label: "Custom kits",
-    },
-    keycap: {
-      value: 2,
-      label: "Keycap",
-    },
-    switch: {
-      value: 3,
-      label: "Switch",
-    },
-    accessory: {
-      value: 4,
-      label: "Accessory",
-    },
-  },
 };
 
 export default constants;

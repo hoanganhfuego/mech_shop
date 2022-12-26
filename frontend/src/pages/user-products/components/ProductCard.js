@@ -41,6 +41,7 @@ export default function ProductCard({
         modules={[Navigation, Pagination]}
         pagination={{
           dynamicBullets: true,
+          dynamicMainBullets: 3,
           clickable: true,
         }}
         slidesPerView={1}

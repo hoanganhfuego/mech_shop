@@ -9,10 +9,12 @@
 
 .swiper-pagination-bullet {
     background-color: white;
+    width: 6px;
+    height: 6px;
 }
 
 .swiper-button-disabled {
-    display: none!important;
+    display: none !important;
 }
 
 .swiper:hover .swiper-button-next {
@@ -45,11 +47,15 @@
     font-weight: 700;
 }
 
-.navbar-underline-container:hover .navbar-underline:after{
+.navbar-underline-container:hover .navbar-underline:after {
     display: block;
 }
 
-.navbar-underline:after{
+.navbar-underline-container:hover .navbar-underline-type:after {
+    width: 0;
+}
+
+.navbar-underline:after {
     display: none;
     content: "";
     position: absolute;
@@ -57,4 +63,14 @@
     right: 0;
     border: solid 1px rgb(163, 159, 159);
     width: 100%;
+}
+
+.navbar-underline-type:after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    border: solid 1px #FD789D;
+    width: 100%;
+    transition: width 0.5s;
 }
