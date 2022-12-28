@@ -15,6 +15,7 @@ export default function CardItem(props) {
     product_price,
     user_avatar,
     user_name,
+    user_id,
   } = props.item;
 
   const auth = useSelector((state) => state.user.auth);
@@ -24,18 +25,6 @@ export default function CardItem(props) {
   });
 
   const onAddToCart = () => {
-    if (!auth) {
-      let cart = [];
-      if (getCookieValue("cart")) {
-        cart = getCookieValue("cart");
-      }
-      cart.push(props.item);
-      const newCart = JSON.stringify(cart);
-      setCookie("cart", newCart, 2);
-      console.log(cart);
-      console.log(getCookieValue("cart"));
-      return;
-    }
     setSendState((prev) => ({ ...prev, loading: true }));
   };
 
@@ -51,9 +40,9 @@ export default function CardItem(props) {
 
     const info = { ...props.item };
 
-    info.product_image = info.product_images[0].product_image;
-    info.cart_quantity = 1;
+    info.owner_id = info.user_id
 
+    delete info.user_id
     delete info.quantity;
     delete info.product_images;
     delete info.create_date;
@@ -62,6 +51,35 @@ export default function CardItem(props) {
     delete info.product_type;
     delete info.user_avatar;
     delete info.user_name;
+
+    if (!auth) {
+      info.cart_quantity = 1;
+      info.product_image = props.item.product_images[0].product_image;
+      info.cart_id = props.item.product_id;
+      info.product_price = props.item.product_price;
+      let cart = getCookieValue("cart");
+
+      if (cart) {
+        if (cart.find((item) => item.product_id === info.product_id)) {
+          cart = cart.map((item) => {
+            if (
+              item.product_id === info.product_id &&
+              item.cart_quantity < info.product_quantity
+            ) {
+              return { ...item, cart_quantity: item.cart_quantity + 1 };
+            }
+            return item;
+          });
+        } else {
+          cart.push(info);
+        }
+      } else {
+        cart = [];
+        cart.push(info);
+      }
+      setCookie("cart", cart, 2);
+      return;
+    }
 
     addToCart(auth?.id, product_id, info)
       .then(() => {

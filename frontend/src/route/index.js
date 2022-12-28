@@ -7,6 +7,8 @@ import UserProducts from "../pages/user-products";
 import { Login, Signup } from "../pages/login";
 import Cart from "../pages/cart";
 import Checkout from "../pages/checkout";
+import GuestOrder from "../pages/userInfo/components/GuestOrder";
+import UserOrder from "../pages/userInfo/components/UserOrder";
 
 export default function AppRoute() {
   return (
@@ -19,6 +21,8 @@ export default function AppRoute() {
       <Route path={Path.userEdit} element={<UserEdit />} />
       <Route path={Path.cart} element={<Cart />} />
       <Route path={Path.checkOut} element={<Checkout />} />
+      <Route path={Path.guestOrder} element={<GuestOrder />} />
+      <Route path={Path.userOrder} element={<UserOrder />} />
     </Routes>
   );
 }

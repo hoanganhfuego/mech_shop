@@ -54,7 +54,7 @@ export default function UserInformation() {
         <div className="bg-white rounded basis-3/4 w-3/4 p-6">
           <p className=" mb-10 font-bold text-3xl">User information</p>
           <div>
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Avatar :</p>
               <img
                 src={getState.value.user_avatar || blank_avatar}
@@ -67,7 +67,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Name :</p>
               <p>{getState.value.name}</p>
             </div>
@@ -76,7 +76,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Gender :</p>
               <p>{constants.gender[getState.value.gender]}</p>
             </div>
@@ -85,7 +85,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Day of birth :</p>
               {getState.value.birth_month &&
                 getState.value.birth_day &&
@@ -101,7 +101,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Email :</p>
               <p>{getState.value.email}</p>
             </div>
@@ -110,7 +110,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Address :</p>
               {getState.value.address_street &&
                 getState.value.address_district &&
@@ -127,7 +127,7 @@ export default function UserInformation() {
               <Line />
             </div>
 
-            <div className="flex items-start mb-6">
+            <div className="flex items-start">
               <p className=" mr-6 w-1/3">Phone number :</p>
               <p>{getState.value.phone}</p>
             </div>

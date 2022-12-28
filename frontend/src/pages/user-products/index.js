@@ -6,7 +6,7 @@ import Main from "./components/Main";
 export default function UserProducts() {
   return (
     <div>
-      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50">
+      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50 shadow-2xl">
         <Header />
       </div>
       <Banner />

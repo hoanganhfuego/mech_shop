@@ -7,9 +7,9 @@ async function getUserProducts(id) {
   return await db.query(query, [id]);
 }
 
-async function getProductByid(array_product_id) {
-  const query = "SELECT * FROM products WHERE product_id IN (?)";
-  return await db.query(query, [array_product_id]);
+async function getProductByid(product_id) {
+  const query = "SELECT * FROM products WHERE product_id = ?";
+  return await db.query(query, [product_id]);
 }
 
 // products_images
@@ -31,14 +31,33 @@ async function addProductImages(product_images) {
 }
 
 //products
-async function getAllProduct(product_type, limit, offset) {
+async function getAllProduct(
+  product_type,
+  sort_price,
+  product_condition,
+  limit,
+  offset
+) {
   let query;
   let count;
   try {
-    query = `SELECT * FROM products ${
-      product_type ? `WHERE product_type = ${product_type}` : ""
+    let where = "";
+    if (product_type) {
+      where = `WHERE product_type = ${product_type}`;
+    }
+    if (product_condition !== "undefined") {
+      where = `WHERE product_condition = "${product_condition}"`;
+    }
+    if (product_type && product_condition !== "undefined") {
+      where = `WHERE product_type = ${product_type} AND product_condition = "${product_condition}"`;
+    }
+    query = `SELECT * FROM products ${where} ${
+      sort_price !== "undefined"
+        ? sort_price === "ascending"
+          ? "ORDER BY product_price"
+          : "ORDER BY product_price DESC"
+        : ""
     } LIMIT ${limit} OFFSET ${(offset - 1) * limit}`;
-
     count = `SELECT COUNT(*) AS total_product FROM products ${
       product_type ? `WHERE product_type = ${product_type}` : ""
     }`;
@@ -60,14 +79,16 @@ async function updateProduct(
   product_name,
   product_price,
   product_description,
-  product_type
+  product_type,
+  product_condition
 ) {
   const query =
-    "UPDATE products SET product_name = ?, product_price = ?, product_description = ?, product_type = ? where product_id = ?";
+    "UPDATE products SET product_name = ?, product_price = ?, product_description = ?, product_condition = ?, product_type = ? WHERE product_id = ?;";
   return await db.query(query, [
     product_name,
     product_price,
     product_description,
+    product_condition,
     product_type,
     product_id,
   ]);
@@ -81,7 +102,8 @@ async function addProduct(
   product_type,
   user_avatar,
   user_name,
-  product_quantity
+  product_quantity,
+  product_condition
 ) {
   const options = {
     weekday: "long",
@@ -91,7 +113,7 @@ async function addProduct(
   };
   const create_date = new Date().toLocaleDateString("en-US", options);
   const query =
-    "INSERT INTO `products` (`product_name`, `product_price`, `user_id`, `create_date`, `product_description`, `product_type`, `user_avatar`, `user_name`, `product_quantity`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO `products` (`product_name`, `product_price`, `user_id`, `create_date`, `product_description`, `product_type`, `user_avatar`, `user_name`, `product_quantity`, `product_condition`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   return await db.query(query, [
     product_name,
     product_price,
@@ -102,6 +124,7 @@ async function addProduct(
     user_avatar,
     user_name,
     product_quantity,
+    product_condition,
   ]);
 }
 

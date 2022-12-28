@@ -1,4 +1,5 @@
 const userProductsModels = require("../../../database/facade/models/user-prouducts/index");
+const userCartModel = require("../../../database/facade/models/user_cart");
 
 async function getImages(data) {
   const productImageIds = data.map((item) => {
@@ -36,13 +37,15 @@ async function updateUserProduct(req, res) {
       product_description,
       product_images,
       product_type,
+      product_condition,
     } = req.body;
     await userProductsModels.updateProduct(
       product_id,
       product_name,
       product_price,
       product_description,
-      product_type
+      product_type,
+      product_condition
     );
     await userProductsModels.deleteAllProductImages(product_id);
     await userProductsModels.addProductImages(
@@ -66,6 +69,7 @@ async function addProduct(req, res) {
       user_avatar,
       user_name,
       product_quantity,
+      product_condition,
     } = req.body;
     const [data] = await userProductsModels.addProduct(
       user_id,
@@ -75,7 +79,8 @@ async function addProduct(req, res) {
       product_type,
       user_avatar,
       user_name,
-      product_quantity
+      product_quantity,
+      product_condition
     );
     const product_id = data.insertId;
     const array_product_images = product_images.map((item) => [
@@ -102,13 +107,18 @@ async function deleteProduct(req, res) {
 
 async function getAllProducts(req, res) {
   try {
-    const { type, page } = req.query;
+    const { type, sort_price, product_condition, page, user_id } = req.query;
     const data = await userProductsModels.getAllProduct(
       Number(type),
+      sort_price,
+      product_condition,
       15,
       Number(page)
     );
     const products = await getImages(data.products);
+    if (user_id) {
+      const cartList = await userCartModel.getUserCartList(user_id);
+    }
 
     const total_product = data.total_product;
     const product_per_page = 15;

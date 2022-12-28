@@ -17,7 +17,7 @@ import Line from "../../../components/Line";
 import { updateUserInformation } from "../../../services/api/index";
 import { getProvincesAndDistrict, postImage } from "../../../services/common";
 import { useFormik } from "formik";
-import * as Yup from "yup";
+import { userValidationSchema } from "../../../validation/userValidation";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateAuth } from "../../../redux/userReducer";
@@ -35,26 +35,6 @@ export default function UserEdit() {
     error: null,
     provinces: [],
     district: [],
-  });
-
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required("user's name is required"),
-    email: Yup.string()
-      .required("user's email is required")
-      .email("email is not valid"),
-    birth_year: Yup.number().required("user's birthday of birth is required"),
-    birth_month: Yup.number().required("user's birthday of birth is required"),
-    birth_day: Yup.number().required("user's day of birthday is required"),
-    phone: Yup.string()
-      .required("user's phone number is required")
-      .matches(phoneRegExp, "phone number is not valid"),
-    gender: Yup.number().required("user's gender is reuiqred"),
-    address_prefecture: Yup.string().required("user's address is required"),
-    address_district: Yup.string().required("user's address is required"),
-    address_street: Yup.string().required("user's address is required"),
   });
 
   const initialValues = userInfo || {
@@ -94,7 +74,7 @@ export default function UserEdit() {
     validateOnMount: false,
     initialValues,
     enableReinitialize: true,
-    validationSchema,
+    validationSchema: userValidationSchema,
     onSubmit,
   });
 
@@ -151,7 +131,7 @@ export default function UserEdit() {
 
   return (
     <div>
-      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50">
+      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50 shadow-2xl">
         <Header />
       </div>
       <Banner />

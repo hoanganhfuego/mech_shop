@@ -29,7 +29,10 @@ export const getUserProducts = (id) => {
 };
 
 export const updateUserProducts = (user_id, product_id, body) => {
-  return client.patch(`api/user-products/${user_id}/product/${product_id}`, body);
+  return client.patch(
+    `api/user-products/${user_id}/product/${product_id}`,
+    body
+  );
 };
 
 export const addUserProducts = (user_id, body) => {
@@ -40,8 +43,13 @@ export const deleteProduct = (product_id) => {
   return client.delete(`api/user-products/${product_id}`);
 };
 
-export const getAllProducts = ({ type = 0, page = 1 }) => {
-  return client.get(`api/all-products/?type=${type}&page=${page}`);
+export const getAllProducts = (
+  { type = 0, page = 1, sort_price = undefined, product_condition = undefined },
+  user_id
+) => {
+  return client.get(
+    `api/all-products/?type=${type}&page=${page}&user_id=${user_id}&sort_price=${sort_price}&product_condition=${product_condition}`
+  );
 };
 
 // login with google
@@ -51,11 +59,13 @@ export const getGoogleUserInfo = (credentials) => {
 
 export const logoutGoogle = (credentials) => {
   return client.get("auth/logout", credentials);
-}; 
+};
 
 //cart
-export const getUserCart = (user_id, page=0, rows_per_page=5) => {
-  return client.get(`api/cart-products/${user_id}/?page=${page}&rows_per_page=${rows_per_page}`);
+export const getUserCart = (user_id, page = 0, rows_per_page = 5) => {
+  return client.get(
+    `api/cart-products/${user_id}/?page=${page}&rows_per_page=${rows_per_page}`
+  );
 };
 
 export const addToCart = (user_id, product_id, body) => {
@@ -70,5 +80,16 @@ export const deleteCart = (cartIds) => {
 };
 
 export const updateCartQuantity = (cart_id, quantity) => {
-  return client.patch(`api/cart-products/cart_id/${cart_id}/quantity/${quantity}`);
+  return client.patch(
+    `api/cart-products/cart_id/${cart_id}/quantity/${quantity}`
+  );
+};
+
+//order
+export const placeOrder = (orders) => {
+  return client.post("api/checkout-order", orders);
+};
+
+export const getUserOrder = (user_id) => {
+  return client.get(`api/user-order/${user_id}`);
 };

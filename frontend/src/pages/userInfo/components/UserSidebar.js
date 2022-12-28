@@ -8,6 +8,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 const SIDEBAR_VALUE = {
   INFOR: Path.userInfo,
   PRODUCTS: Path.userProducts,
+  USER_ORDER: Path.userOrder,
+  GUEST_ORDER: Path.guestOrder
 };
 
 export default function UserSidebar({ props }) {

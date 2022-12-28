@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { setAuth } from "../../redux/userReducer";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllProducts,
-  getGoogleUserInfo,
-} from "../../services/api/index";
+import { getAllProducts, getGoogleUserInfo } from "../../services/api/index";
 import constants from "../../constants/constants";
 import UseGetSearchParams from "../../ultis/queryParams";
 import ProductRender from "./components/ProductsRender";
@@ -42,25 +39,12 @@ export default function Main() {
 
   useEffect(() => {
     setGetState((prev) => ({ ...prev, loading: true }));
-  }, [searchParams.type, searchParams.page]);
-
-  useEffect(() => {
-    let mounted = true;
-    const cleanup = () => {
-      mounted = false;
-    };
-
-    if (auth) {
-      return cleanup;
-    }
-
-    getGoogleUserInfo({ withCredentials: true }).then((res) => {
-      if (!mounted) return;
-      dispatch(setAuth(res.data));
-    });
-    return cleanup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [
+    searchParams.type,
+    searchParams.page,
+    searchParams.product_condition,
+    searchParams.sort_price,
+  ]);
 
   useEffect(() => {
     let mounted = true;
@@ -71,22 +55,30 @@ export default function Main() {
     if (!getState.loading) {
       return cleanup;
     }
-
-    getAllProducts(searchParams)
+    let user_google_id;
+    getGoogleUserInfo({ withCredentials: true })
       .then((res) => {
-        if (!mounted) return;
-        setGetState({
-          loading: false,
-          error: "",
-          values: res.data,
-        });
+        if (!mounted || auth) return;
+        dispatch(setAuth(res.data));
+        user_google_id = res.data.id;
       })
-      .catch((error) => {
-        if (!mounted) return;
-        setGetState({
-          values: [],
-          error: error.response?.data?.message,
-        });
+      .finally(() => {
+        getAllProducts(searchParams, user_google_id || auth?.id)
+          .then((res) => {
+            if (!mounted) return;
+            setGetState({
+              loading: false,
+              error: "",
+              values: res.data,
+            });
+          })
+          .catch((error) => {
+            if (!mounted) return;
+            setGetState({
+              values: [],
+              error: error.response?.data?.message,
+            });
+          });
       });
 
     return cleanup;
@@ -106,6 +98,7 @@ export default function Main() {
         </div>
       ) : (
         <ProductRender
+          setSearchParams={setSearchParams}
           products={getState.values.products}
           searchParams={searchParams}
           typeName={typeName}

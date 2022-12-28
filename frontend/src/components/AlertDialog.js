@@ -16,6 +16,7 @@ export default function AlertDialog({ handleClose, open, onDelete }) {
     <div>
       <Dialog
         open={open}
+        fullWidth
         TransitionComponent={Transition}
         transitionDuration={400}
         keepMounted
@@ -25,7 +26,7 @@ export default function AlertDialog({ handleClose, open, onDelete }) {
         <DialogTitle>{"Alert"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Are you sure want to delete this product
+            Are you sure want to remove this product
           </DialogContentText>
         </DialogContent>
         <DialogActions>

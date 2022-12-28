@@ -26,13 +26,17 @@ import {
 import AlertDialog from "../../../components/AlertDialog";
 import { Link } from "react-router-dom";
 import Path from "../../../route/Path";
-import { getCookieValue } from "../../../ultis/cookiesFunc";
+import {
+  getCookieValue,
+  setCookie,
+  deleteCookieValue,
+} from "../../../ultis/cookiesFunc";
 
 export default function CartRender() {
   const [getState, setGetState] = useState({
     loading: true,
     error: "",
-    value: { carts: getCookieValue("cart") },
+    value: {},
   });
   const [sendState, setSendState] = useState({
     loading: false,
@@ -44,7 +48,7 @@ export default function CartRender() {
   const [open, setOpen] = useState(false);
   const handleClickOpen = (cart_id) => {
     setOpen(true);
-    setSelectList([cart_id]);
+    setSelectList(cart_id);
   };
 
   const handleClose = () => {
@@ -57,9 +61,9 @@ export default function CartRender() {
   };
 
   const handleSelectAll = (event) => {
-    if (event.target.checked) {
+    if (event.target.checked && getState.value?.user_cart?.length > 0) {
       setSelectList(
-        getState.value.carts.map((item) => {
+        getState.value.user_cart.map((item) => {
           return item.cart_id;
         })
       );
@@ -67,7 +71,6 @@ export default function CartRender() {
       setSelectList([]);
     }
   };
-
   const handleSelect = (cart_id) => {
     if (selectList.includes(cart_id)) {
       selectList.splice(selectList.indexOf(cart_id), 1);
@@ -87,6 +90,16 @@ export default function CartRender() {
   };
 
   const onDelete = () => {
+    if (!auth) {
+      const new_user_cart = deleteCookieValue(selectList);
+      setGetState((prev) => ({
+        ...prev,
+        value: { ...prev.value, user_cart: new_user_cart },
+      }));
+      setSelectList([]);
+      handleClose();
+      return;
+    }
     deleteCart(selectList.join("&cart_id="))
       .then(() => {
         setGetState((prev) => ({ ...prev, loading: true }));
@@ -106,12 +119,39 @@ export default function CartRender() {
     cart_id,
     product_quantity
   ) => {
+    if (!auth) {
+      const new_user_cart = getState.value.user_cart.map((item, index) => {
+        if (index === cart_index) {
+          let cart_quantity = item.cart_quantity + 1;
+          let quantity_error = false;
+          if (cart_quantity > product_quantity) {
+            cart_quantity = cart_quantity - 1;
+            quantity_error = true;
+          }
+          return {
+            ...item,
+            quantity_error: quantity_error,
+            cart_quantity: cart_quantity,
+          };
+        }
+        return item;
+      });
+      setGetState((prev) => ({
+        ...prev,
+        value: {
+          ...prev.value,
+          user_cart: new_user_cart,
+        },
+      }));
+      setCookie("cart", new_user_cart, 2);
+      return;
+    }
     if (cart_quantity >= product_quantity) {
       return setGetState((prev) => ({
         ...prev,
         value: {
           ...prev.value,
-          carts: getState.value.carts.map((item, index) => {
+          user_cart: getState.value.user_cart.map((item, index) => {
             if (index === cart_index) {
               return { ...item, quantity_error: true };
             }
@@ -120,13 +160,14 @@ export default function CartRender() {
         },
       }));
     }
+
     updateCartQuantity(cart_id, cart_quantity + 1)
       .then(() => {
         setGetState((prev) => ({
           ...prev,
           value: {
             ...prev.value,
-            carts: getState.value.carts.map((item, index) => {
+            user_cart: getState.value.user_cart.map((item, index) => {
               if (index === cart_index) {
                 return { ...item, cart_quantity: item.cart_quantity + 1 };
               }
@@ -149,6 +190,31 @@ export default function CartRender() {
     cart_id,
     product_quantity
   ) => {
+    if (cart_quantity === 1) {
+      return handleClickOpen([cart_id]);
+    }
+    if (!auth) {
+      const new_user_cart = getState.value.user_cart.map((item, index) => {
+        if (index === cart_index) {
+          return {
+            ...item,
+            cart_quantity: item.cart_quantity - 1,
+            quantity_error: false,
+          };
+        }
+        return item;
+      });
+      setGetState((prev) => ({
+        ...prev,
+        value: {
+          ...prev.value,
+          user_cart: new_user_cart,
+        },
+      }));
+      setCookie("cart", new_user_cart, 2);
+      return;
+    }
+
     if (cart_quantity > 1 && cart_quantity <= product_quantity) {
       updateCartQuantity(cart_id, cart_quantity - 1)
         .then(() => {
@@ -156,7 +222,7 @@ export default function CartRender() {
             ...prev,
             value: {
               ...prev.value,
-              carts: getState.value.carts.map((item, index) => {
+              user_cart: getState.value.user_cart.map((item, index) => {
                 if (index === cart_index) {
                   return {
                     ...item,
@@ -176,14 +242,11 @@ export default function CartRender() {
           }));
         });
     }
-    if (cart_quantity === 1) {
-      handleClickOpen(cart_id);
-    }
   };
 
   const totalPrice = () => {
     if (!getState.loading) {
-      return getState.value.carts.reduce((acc, curr) => {
+      return getState.value.user_cart.reduce((acc, curr) => {
         if (selectList.includes(curr.cart_id)) {
           return acc + curr.product_price * curr.cart_quantity;
         }
@@ -191,6 +254,18 @@ export default function CartRender() {
       }, 0);
     }
     return 0;
+  };
+  
+  const checkOutList = () => {
+    const checkOutList = [];
+    if (getState.value?.user_cart) {
+      for (let item of getState.value?.user_cart) {
+        if (selectList.includes(item.cart_id)) {
+          checkOutList.push(item);
+        }
+      }
+    }
+    return checkOutList;
   };
 
   useEffect(() => {
@@ -202,6 +277,19 @@ export default function CartRender() {
       return cleanup;
     }
 
+    if (!auth) {
+      const user_cart = getCookieValue("cart");
+      return setGetState({
+        loading: false,
+        error: "",
+        value: {
+          user_cart: user_cart || [],
+          total_rows: user_cart?.length || 0,
+          rowsPerPage: 5,
+        },
+      });
+    }
+
     getUserCart(auth?.id, searchParams.page, searchParams.rows_per_page)
       .then((res) => {
         if (!mounted) {
@@ -209,7 +297,7 @@ export default function CartRender() {
         }
         const data = {
           ...res.data,
-          carts: res.data.carts.map((item) => ({
+          user_cart: res.data.user_cart.map((item) => ({
             ...item,
             quantity_error: false,
           })),
@@ -253,7 +341,9 @@ export default function CartRender() {
                       <TableCell width="5%">
                         <Checkbox
                           checked={
-                            selectList.length === getState.value.carts.length
+                            selectList.length ===
+                              getState.value?.user_cart?.length &&
+                            getState.value?.user_cart?.length > 0
                           }
                           onChange={handleSelectAll}
                         />
@@ -274,7 +364,7 @@ export default function CartRender() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {getState.value.carts.map((item, index) => {
+                    {getState.value.user_cart.map((item, index) => {
                       return (
                         <TableRow key={item.cart_id}>
                           <TableCell>
@@ -334,8 +424,8 @@ export default function CartRender() {
                                 error={true}
                                 className="!text-center"
                               >
-                                This product only has{" "}
-                                {item.product_quantity} left
+                                This product only has {item.product_quantity}{" "}
+                                left
                               </FormHelperText>
                             )}
                           </TableCell>
@@ -344,7 +434,7 @@ export default function CartRender() {
                           </TableCell>
                           <TableCell align="center">
                             <Button
-                              onClick={() => handleClickOpen(item.cart_id)}
+                              onClick={() => handleClickOpen([item.cart_id])}
                             >
                               Delete
                             </Button>
@@ -377,12 +467,14 @@ export default function CartRender() {
                   control={
                     <Checkbox
                       checked={
-                        selectList?.length === getState.value?.carts?.length
+                        selectList?.length ===
+                          getState.value?.user_cart?.length &&
+                        getState.value?.user_cart?.length > 0
                       }
                       onChange={handleSelectAll}
                     />
                   }
-                  label={`Select All (${getState.value?.carts?.length})`}
+                  label={`Select All (${getState.value?.user_cart?.length})`}
                   labelPlacement="end"
                 />
               </TableCell>
@@ -400,7 +492,14 @@ export default function CartRender() {
               </TableCell>
               <TableCell width="20%" align="right">
                 <Button variant="contained">
-                  <Link to={Path.checkOut + `?test=1`}>check out</Link>
+                  <Link
+                    to={
+                      Path.checkOut +
+                      `?selectList=${JSON.stringify(checkOutList())}`
+                    }
+                  >
+                    check out
+                  </Link>
                 </Button>
               </TableCell>
             </TableHead>

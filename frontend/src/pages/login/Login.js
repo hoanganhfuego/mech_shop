@@ -82,7 +82,7 @@ export default function Login() {
 
   return (
     <div>
-      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50">
+      <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50 shadow-2xl">
         <Header />
       </div>
       <div className="w-full flex justify-center mt-6">

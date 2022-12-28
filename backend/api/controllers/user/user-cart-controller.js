@@ -6,19 +6,20 @@ async function getUserCart(req, res) {
     const { page, rows_per_page } = req.query;
     const user_id = req.params.user_id;
     const data = await userCartModel.getUserCart(user_id, page, rows_per_page);
-    const [products] = await userProductsModels.getProductByid(
-      data.data.map((item) => item.product_id)
-    );
-    const newData = data.data.map((item, index) => ({
-      cart_id: item.cart_id,
-      product_image: item.product_image,
-      cart_quantity: item.cart_quantity,
-      product_name: products[index].product_name,
-      product_price: products[index].product_price,
-      product_quantity: products[index].product_quantity,
-    }));
+    for (let i = 0; i < data.user_cart.length; i++) {
+      const [product] = await userProductsModels.getProductByid(
+        data.user_cart[i].product_id
+      );
+      const [product_image] = await userProductsModels.getProductImages(
+        data.user_cart[i].product_id
+      );
+      data.user_cart[i].product_name = product[0].product_name;
+      data.user_cart[i].product_price = product[0].product_price;
+      data.user_cart[i].product_quantity = product[0].product_quantity;
+      data.user_cart[i].product_image = product_image[0].product_image;
+    }
     res.status(200).send({
-      carts: newData,
+      user_cart: data.user_cart,
       total_rows: data.total_rows,
       rowsPerPage: Number(rows_per_page),
     });
@@ -29,26 +30,29 @@ async function getUserCart(req, res) {
 
 async function addProductToCart(req, res) {
   try {
+    const {owner_id} = req.body 
     const { user_id, product_id } = req.params;
-    const { cart_quantity, product_image } = req.body;
     const [isProductExist] = await userCartModel.getOneUserCart(
       user_id,
       product_id
     );
-    if (!Boolean(isProductExist.length)) {
-      await userCartModel.addProductToCart(
-        user_id,
-        product_id,
-        cart_quantity,
-        product_image
+    if (Boolean(isProductExist.length)) {
+      const [product] = await userProductsModels.getProductByid(
+        isProductExist[0].product_id
       );
-      return res.status(200).send({ message: "add product success" });
-    } else {
+      if (isProductExist[0].cart_quantity >= product[0].product_quantity) {
+        return res
+          .status(400)
+          .send({ message: "limited number of products has been reached" });
+      }
       await userCartModel.updateQuantity(
         isProductExist[0].cart_id,
-        isProductExist[0].cart_quantity + cart_quantity
+        isProductExist[0].cart_quantity + 1
       );
       return res.status(200).send({ message: "update quantity success" });
+    } else {
+      await userCartModel.addProductToCart(user_id, product_id, 1, owner_id);
+      return res.status(200).send({ message: "add product success" });
     }
   } catch (error) {
     res.status(500).send({ message: error.message });

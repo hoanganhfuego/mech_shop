@@ -7,6 +7,8 @@ const Path = {
   userProducts: "/user-products",
   cart: "/cart",
   checkOut: "/check-out",
+  userOrder: "/user-order",
+  guestOrder: "/guest-order",
 };
 
 export default Path;

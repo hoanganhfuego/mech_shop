@@ -14,31 +14,13 @@ import Line from "../../../components/Line";
 import { useFormik } from "formik";
 import { useEffect, useState, forwardRef } from "react";
 import { postImage } from "../../../services/common";
-import * as Yup from "yup";
+import { productValidationSchema } from "../../../validation/userValidation";
 import { useSelector } from "react-redux";
 import constants from "../../../constants/constants";
 import Slide from "@mui/material/Slide";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
-});
-
-const validationSchema = Yup.object().shape({
-  product_name: Yup.string().required("Product's name is required"),
-  product_price: Yup.number().required("Product's price is required"),
-  product_description: Yup.string()
-    .max(400, "Character limit is 200")
-    .required(
-      "Product's description is required, please make sure that buyers can know how the condition of your key board is"
-    ),
-  product_images: Yup.array()
-    .min(
-      6,
-      "You must have at least 6 pictures of your keyboard, pictures should be taken from different angles"
-    )
-    .required("Product's picture is required"),
-  product_type: Yup.number().required("Product's type is required"),
-  product_quantity: Yup.number().required("Product's quantity is required"),
 });
 
 export default function ProductModel({
@@ -72,9 +54,10 @@ export default function ProductModel({
       user_avatar: auth.user_avatar,
       user_name: auth.name,
       product_quantity: "",
+      product_condition: "",
     },
     onSubmit,
-    validationSchema,
+    validationSchema: productValidationSchema,
     enableReinitialize: true,
   });
 
@@ -246,6 +229,37 @@ export default function ProductModel({
               error={Boolean(errors.product_type)}
             >
               {errors.product_type}
+            </FormHelperText>
+          </div>
+
+          <div className="py-6">
+            <Line />
+          </div>
+
+          <div>
+            <p>Condition: </p>
+            <FormControl>
+              <RadioGroup
+                value={values.product_condition}
+                onChange={(e) => setFieldValue("product_condition", e.target.value)}
+              >
+                <div>
+                  <FormControlLabel
+                    control={<Radio value="new" />}
+                    label="New"
+                  />
+                  <FormControlLabel
+                    control={<Radio value="used" />}
+                    label="Used"
+                  />
+                </div>
+              </RadioGroup>
+            </FormControl>
+            <FormHelperText
+              className="w-full"
+              error={Boolean(errors.product_condition)}
+            >
+              {errors.product_condition}
             </FormHelperText>
           </div>
 

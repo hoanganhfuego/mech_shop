@@ -1,6 +1,7 @@
 const userController = require("../api/controllers/user/user-controller");
 const userProductsController = require("../api/controllers/user/user-products-controller");
 const userCartController = require("../api/controllers/user/user-cart-controller");
+const userOrderController = require("../api/controllers/order/order-controller")
 
 const passport = require("passport");
 const auth = require("../api/middleware/auth");
@@ -59,7 +60,11 @@ const routes = (app) => {
     app.get("/all-products", userProductsController.getAllProducts);
 
     //cart
-    app.get("/cart-products/:user_id", auth.verifyToken, userCartController.getUserCart);
+    app.get(
+      "/cart-products/:user_id",
+      auth.verifyToken,
+      userCartController.getUserCart
+    );
     app.post(
       "/cart-products/user/:user_id/product/:product_id",
       auth.verifyToken,
@@ -75,6 +80,11 @@ const routes = (app) => {
       auth.verifyToken,
       userCartController.updateQuantity
     );
+
+    //checkout order
+    app.post("/checkout-order/", userOrderController.addCheckoutOrder);
+    app.get("/user-order/:buyer_id", auth.verifyToken, userOrderController.getUserOrder)
+    app.patch("/user-order/update/:buyer_id", auth.verifyToken, userOrderController.updateOrderStatus)
 
     // signup and login
     app.post("/signup", userController.signUp);
@@ -101,10 +111,13 @@ const routes = (app) => {
   });
 
   app.namespace("/auth", function () {
-    app.get("/google", passport.authenticate("google", {
-      scope: ["profile", "email"],
-      prompt: "select_account"
-    }));
+    app.get(
+      "/google",
+      passport.authenticate("google", {
+        scope: ["profile", "email"],
+        prompt: "select_account",
+      })
+    );
 
     app.get(
       "/google/callback",

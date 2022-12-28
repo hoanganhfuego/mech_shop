@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@mui/material";
 import Path from "../route/Path";
 import { setAuth } from "../redux/userReducer";
+import Line from "./Line";
 
 const navBarContent = [
   {
@@ -146,9 +147,32 @@ export default function Header() {
           <div className="flex flex-col">
             {auth ? (
               <>
-                <Link to={Path.userInfo}>
-                  <Button>User info</Button>
+                <Link className="flex gap-2" to={Path.userInfo}>
+                  <Button>
+                    <img
+                      src={auth.user_avatar}
+                      className=" rounded-full w-7 h-7"
+                      alt="user_avatar"
+                    />{" "}
+                    <span className=" flex-grow-0 overflow-hidden text-ellipsis whitespace-nowrap">
+                      {" "}
+                      {auth.name}
+                    </span>
+                  </Button>
                 </Link>
+                <Line />
+                <Link className="flex justify-center" to={Path.userProducts}>
+                  <Button>product</Button>
+                </Link>
+                <Line />
+                <Link className="flex justify-center" to={Path.userOrder}>
+                  <Button>your order</Button>
+                </Link>
+                <Line />
+                <Link className="flex justify-center" to={Path.guestOrder}>
+                  <Button>guest order</Button>
+                </Link>
+                <Line />
                 <Button onClick={onLogOut}>Log out</Button>
               </>
             ) : (
