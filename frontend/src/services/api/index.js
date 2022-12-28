@@ -93,3 +93,7 @@ export const placeOrder = (orders) => {
 export const getUserOrder = (user_id) => {
   return client.get(`api/user-order/${user_id}`);
 };
+
+export const updateOrderStatus = (body) => {
+  return client.patch(`api/user-order/update`, body);
+};

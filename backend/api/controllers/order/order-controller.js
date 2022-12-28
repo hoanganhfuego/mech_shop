@@ -64,7 +64,14 @@ async function addCheckoutOrder(req, res) {
   }
 }
 
-async function updateOrderStatus() {}
+async function updateOrderStatus(req, res) {
+  try {
+    await orderModel.updateOrderStatus(req.body);
+    res.status(200).send({ message: "update order status success" });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
 
 module.exports = {
   addCheckoutOrder,

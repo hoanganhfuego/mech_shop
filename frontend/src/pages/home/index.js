@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import Main from "./Main";
 import Filter from "../../components/Filter";
 import Line from "../../components/Line";
+import Footer from "../../components/Footer";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       </div>
       <Banner />
       <Main />
+      <Footer />
     </div>
   );
 }

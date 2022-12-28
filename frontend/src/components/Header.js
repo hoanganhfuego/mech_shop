@@ -2,6 +2,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocalMallOutlinedIcon from "@mui/icons-material/LocalMallOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Popover from "@mui/material/Popover";
 import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
@@ -144,11 +145,11 @@ export default function Header() {
             horizontal: "center",
           }}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col p-4 gap-3">
             {auth ? (
               <>
                 <Link className="flex gap-2" to={Path.userInfo}>
-                  <Button>
+                  <div className="flex gap-2 w-[123px] justify-center">
                     <img
                       src={auth.user_avatar}
                       className=" rounded-full w-7 h-7"
@@ -158,30 +159,35 @@ export default function Header() {
                       {" "}
                       {auth.name}
                     </span>
-                  </Button>
+                  </div>
                 </Link>
                 <Line />
                 <Link className="flex justify-center" to={Path.userProducts}>
-                  <Button>product</Button>
+                  <div>Your product</div>
                 </Link>
                 <Line />
                 <Link className="flex justify-center" to={Path.userOrder}>
-                  <Button>your order</Button>
+                  <div>Your order</div>
                 </Link>
                 <Line />
                 <Link className="flex justify-center" to={Path.guestOrder}>
-                  <Button>guest order</Button>
+                  <div>Guest order</div>
                 </Link>
                 <Line />
-                <Button onClick={onLogOut}>Log out</Button>
+                <div onClick={onLogOut} role="button" className="flex justify-center gap-2">
+                  {" "}
+                  <span>Log out</span>
+                  <LogoutIcon />
+                </div>
               </>
             ) : (
               <>
                 <Link to={Path.login}>
-                  <Button>Login</Button>
+                  <p>Login</p>
                 </Link>
+                <Line />
                 <Link to={Path.signup}>
-                  <Button>Sign up</Button>
+                  <p>Sign up</p>
                 </Link>
               </>
             )}

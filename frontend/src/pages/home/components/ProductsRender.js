@@ -55,7 +55,7 @@ export default function ProductRender({
   });
 
   return (
-    <div className="w-1200">
+    <div className="w-1200 bg-white">
       <div className="flex justify-between mb-4">
         <p className="font-medium text-lg">{typeName()}</p>
         <Button

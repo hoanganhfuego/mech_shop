@@ -84,7 +84,7 @@ const routes = (app) => {
     //checkout order
     app.post("/checkout-order/", userOrderController.addCheckoutOrder);
     app.get("/user-order/:buyer_id", auth.verifyToken, userOrderController.getUserOrder)
-    app.patch("/user-order/update/:buyer_id", auth.verifyToken, userOrderController.updateOrderStatus)
+    app.patch("/user-order/update", auth.verifyToken, userOrderController.updateOrderStatus)
 
     // signup and login
     app.post("/signup", userController.signUp);

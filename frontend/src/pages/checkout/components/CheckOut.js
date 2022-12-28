@@ -18,8 +18,11 @@ import Line from "../../../components/Line";
 import DotLine from "../../../components/DotLine";
 import { useSelector } from "react-redux";
 import Order from "./Order";
+import { useNavigate } from "react-router-dom";
+import Path from "../../../route/Path";
 
 export default function CheckOut() {
+  const navigate = useNavigate();
   const auth = useSelector((state) => state.user.auth);
   const [searchParams] = UseGetSearchParams();
   const [getState, setGetState] = useState({
@@ -95,6 +98,7 @@ export default function CheckOut() {
       .then(() => {
         if (!mounted) return;
         setSendState((prev) => ({ ...prev, loading: false }));
+        navigate(Path.userOrder);
       })
       .catch((error) => {
         if (!mounted) return;

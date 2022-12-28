@@ -5,8 +5,9 @@ async function getUserOrder(buyer_id) {
   return await db.query(query, [buyer_id]);
 }
 
-async function updateOrderStatus(status, order_id) {
-  const query = "UPDATE order SET status = ? WHERE order_id = ?";
+async function updateOrderStatus({status, order_id}) {
+  console.log(status, order_id)
+  const query = "UPDATE `order` SET status = ? WHERE order_id = ?";
   return await db.query(query, [status, order_id]);
 }
 

@@ -1,4 +1,5 @@
 import Banner from "../../components/Banner";
+import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import UserSidebar from "../userInfo/components/UserSidebar";
 import Main from "./components/Main";
@@ -16,6 +17,7 @@ export default function UserProducts() {
           <UserSidebar />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

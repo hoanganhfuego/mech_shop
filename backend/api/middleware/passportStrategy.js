@@ -18,6 +18,7 @@ passport.use(
       const [data] = await db.query(query, [email]);
       if (Boolean(data.length)) {
         const info = { ...data[0] };
+        console.log(data)
 
         const access_token = genarateToken.access_token({
           id: info.id,

@@ -1,4 +1,5 @@
 import Banner from "../../components/Banner";
+import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import Main from "./Main";
 
@@ -10,6 +11,7 @@ export default function UserInfo() {
       </div>
       <Banner />
       <Main />
+      <Footer />
     </div>
   );
 }

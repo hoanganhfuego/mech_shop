@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import { signup } from "../../services/api";
 import { setAuth } from "../../redux/userReducer";
 import Path from "../../route/Path";
+import Footer from "../../components/Footer";
 
 export default function Signup() {
   const [sendState, setSendState] = useState({
@@ -91,7 +92,7 @@ export default function Signup() {
       <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50 shadow-2xl">
         <Header />
       </div>
-      <div className="w-full flex justify-center mt-6">
+      <div className="w-full flex justify-center my-40">
         <form onSubmit={handleSubmit}>
           <div className=" w-96 flex items-center flex-col">
             <p className=" text-6xl mb-6">Sign up</p>
@@ -147,6 +148,7 @@ export default function Signup() {
           </div>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }

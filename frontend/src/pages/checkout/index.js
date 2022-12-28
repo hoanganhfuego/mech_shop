@@ -1,6 +1,7 @@
 import Banner from "../../components/Banner";
 import Header from "../../components/Header";
 import CheckOut from "./components/CheckOut";
+import Footer from "../../components/Footer";
 
 export default function Checkout() {
   return (
@@ -12,6 +13,7 @@ export default function Checkout() {
       <div className="w-full flex justify-center bg-primary-grey">
         <CheckOut />
       </div>
+      <Footer />
     </div>
   );
 }

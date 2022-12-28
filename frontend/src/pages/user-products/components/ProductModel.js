@@ -83,6 +83,28 @@ export default function ProductModel({
     });
   };
 
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("file", files[i]);
+    }
+    postImage(formData).then((res) => {
+      const imageUrls = res.data.map((file) => {
+        return {
+          product_image:
+            process.env.REACT_APP_API_URL + file.replaceAll(/\\/g, "/"),
+        };
+      });
+      setFieldValue("product_images", [...values.product_images, ...imageUrls]);
+    });
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -241,7 +263,9 @@ export default function ProductModel({
             <FormControl>
               <RadioGroup
                 value={values.product_condition}
-                onChange={(e) => setFieldValue("product_condition", e.target.value)}
+                onChange={(e) =>
+                  setFieldValue("product_condition", e.target.value)
+                }
               >
                 <div>
                   <FormControlLabel
@@ -288,7 +312,7 @@ export default function ProductModel({
             <Line />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4" onDragOver={onDragOver} onDrop={onDrop}>
             <p className="mb-1">Product images: </p>
             <div>
               <div className="flex mb-4 flex-wrap -m-2">

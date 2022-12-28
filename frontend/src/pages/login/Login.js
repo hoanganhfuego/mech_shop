@@ -10,6 +10,8 @@ import Header from "../../components/Header";
 import { login } from "../../services/api";
 import Path from "../../route/Path";
 import { setAuth } from "../../redux/userReducer";
+import Footer from "../../components/Footer";
+import GoogleIcon from "@mui/icons-material/Google";
 
 export default function Login() {
   const [sendState, setSendState] = useState({
@@ -85,7 +87,7 @@ export default function Login() {
       <div className="w-full flex flex-col items-center  sticky top-0 bg-white z-50 shadow-2xl">
         <Header />
       </div>
-      <div className="w-full flex justify-center mt-6">
+      <div className="w-full flex justify-center my-40">
         <form onSubmit={handleSubmit}>
           <div className=" w-96 flex items-center flex-col">
             <p className=" text-6xl mb-6">Login</p>
@@ -111,9 +113,6 @@ export default function Login() {
                 fullWidth
               />
             </div>
-            <p className=" underline text-left w-full mb-6 cursor-pointer">
-              Forgot password?
-            </p>
             <Button
               variant="contained"
               type="submit"
@@ -134,10 +133,11 @@ export default function Login() {
             <Button
               variant="contained"
               type="button"
-              className="!mb-6 w-full"
+              className="!mb-6 w-full flex gap-2"
               onClick={authGoogle}
             >
-              Login with Google
+              <GoogleIcon />
+              <span>Login with Google</span>
             </Button>
             <Link to={Path.signup} className="w-full">
               <Button
@@ -151,6 +151,7 @@ export default function Login() {
           </div>
         </form>
       </div>
+      <Footer />
       <Snackbar
         ContentProps={{
           sx: {
