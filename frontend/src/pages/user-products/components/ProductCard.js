@@ -49,9 +49,9 @@ export default function ProductCard({
       >
         {product_images.map((imageUrl, index) => {
           return (
-            <SwiperSlide key={index} className="!w-fit !h-fit">
+            <SwiperSlide key={index}>
               <img
-                className="object-cover w-full h-full aspect-image"
+                className="object-cover w-full aspect-video"
                 src={imageUrl.product_image}
                 alt="product"
               />

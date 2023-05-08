@@ -15,7 +15,6 @@ export default function CardItem(props) {
     product_price,
     user_avatar,
     user_name,
-    user_id,
   } = props.item;
 
   const auth = useSelector((state) => state.user.auth);
@@ -141,7 +140,7 @@ export default function CardItem(props) {
       <div className="flex items-center justify-between">
         <img
           src={user_avatar}
-          className="w-7 aspect-square rounded-full"
+          className="w-7 aspect-image object-cover rounded-full"
           alt="user avatar"
         ></img>
         <span>{user_name}</span>
