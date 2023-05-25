@@ -1,3 +1,71 @@
+const { Sequelize, DataTypes } = require('sequelize');
+
+const sequelize = new Sequelize('mech_shop', 'root', 'anh753918426', {
+  host: 'localhost',
+  dialect: 'mysql'
+})
+
+const connectionDatabase = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connected to database')
+  } catch (error) {
+    console.log('Unable to connect to database', error)
+  }
+}
+
+const Product = sequelize.define('products', {
+  product_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    unique: true,
+  },
+  product_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  product_price: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    foreignKey: true
+  },
+  create_date: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  product_type: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  user_avatar: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  user_name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  product_quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  product_condition: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  product_description: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+},{
+  timestamps: false, // Disable automatic timestamps
+});
+
 const userProductsModels = require("../../../database/facade/models/user-prouducts/index");
 const userCartModel = require("../../../database/facade/models/user_cart");
 
@@ -60,30 +128,40 @@ async function updateUserProduct(req, res) {
 async function addProduct(req, res) {
   try {
     const user_id = req.params.user_id;
-    const {
-      product_name,
-      product_price,
-      product_description,
-      product_images,
-      product_type,
-      user_avatar,
-      user_name,
-      product_quantity,
-      product_condition,
-    } = req.body;
-    const [data] = await userProductsModels.addProduct(
-      user_id,
-      product_name,
-      product_price,
-      product_description,
-      product_type,
-      user_avatar,
-      user_name,
-      product_quantity,
-      product_condition
-    );
-    const product_id = data.insertId;
-    const array_product_images = product_images.map((item) => [
+    await Product.sync()
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const create_date = new Date().toLocaleDateString("en-US", options);
+    const newProduct = await Product.create({...req.body, user_id, create_date})
+    // const user_id = req.params.user_id;
+    // const {
+    //   product_name,
+    //   product_price,
+    //   product_description,
+    //   product_images,
+    //   product_type,
+    //   user_avatar,
+    //   user_name,
+    //   product_quantity,
+    //   product_condition,
+    // } = req.body;
+    // const [data] = await userProductsModels.addProduct(
+    //   user_id,
+    //   product_name,
+    //   product_price,
+    //   product_description,
+    //   product_type,
+    //   user_avatar,
+    //   user_name,
+    //   product_quantity,
+    //   product_condition
+    // );
+    const product_id = newProduct.product_id;
+    const array_product_images = req.body.product_images.map((item) => [
       item.product_image,
       product_id,
       user_id,
@@ -141,4 +219,5 @@ module.exports = {
   addProduct,
   getUserProducts,
   updateUserProduct,
+  connectionDatabase
 };

@@ -1,12 +1,17 @@
 require("dotenv").config();
 require("express-namespace");
 require("./api/middleware/passportStrategy");
+const {
+  connectionDatabase,
+} = require("./api/controllers/user/user-products-controller");
 const express = require("express");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const app = express();
 const cors = require("cors");
+
+connectionDatabase();
 
 app.use(
   cookieSession({

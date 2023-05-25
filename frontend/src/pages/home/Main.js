@@ -56,13 +56,13 @@ export default function Main() {
       return cleanup;
     }
     let user_google_id;
-    getGoogleUserInfo({ withCredentials: true })
-      .then((res) => {
-        if (!mounted || auth) return;
-        dispatch(setAuth(res.data));
-        user_google_id = res.data.id;
-      })
-      .finally(() => {
+    // getGoogleUserInfo({ withCredentials: true })
+    //   .then((res) => {
+    //     if (!mounted || auth) return;
+    //     dispatch(setAuth(res.data));
+    //     user_google_id = res.data.id;
+    //   })
+    //   .finally(() => {
         getAllProducts(searchParams, user_google_id || auth?.id)
           .then((res) => {
             if (!mounted) return;
@@ -79,7 +79,7 @@ export default function Main() {
               error: error.response?.data?.message,
             });
           });
-      });
+      // });
 
     return cleanup;
     // eslint-disable-next-line react-hooks/exhaustive-deps

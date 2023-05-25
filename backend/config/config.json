@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "root",
+    "password": "anh753918426",
+    "database": "mech_shop",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}

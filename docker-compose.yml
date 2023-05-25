@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+      - "8585:8585"
+    restart: unless-stopped
+    depends_on:
+      - database
+  database:
+    image: mysql
+    ports: 
+      - "3308:3306"
+    restart: always
+    environment:
+    - MYSQL_ROOT_USER=root
+    - MYSQL_ROOT_PASSWORD=anh753918426
+    - MYSQL_DATABASE= mech_shop
